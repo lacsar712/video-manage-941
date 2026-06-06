@@ -45,6 +45,9 @@ export function createVideo(data) {
   formData.append('cover_url', data.cover_url)
   formData.append('description', data.description || '')
   formData.append('status', data.status)
+  if (data.content_rating_code) {
+    formData.append('content_rating_code', data.content_rating_code)
+  }
 
   return request({
     url: '/videos',
@@ -60,6 +63,9 @@ export function updateVideo(id, data) {
   formData.append('cover_url', data.cover_url)
   formData.append('description', data.description || '')
   formData.append('status', data.status)
+  if (data.content_rating_code) {
+    formData.append('content_rating_code', data.content_rating_code)
+  }
 
   return request({
     url: `/videos/${id}`,
@@ -410,6 +416,91 @@ export function updateSubtitleStatus(id, status) {
 
   return request({
     url: `/subtitles/${id}/status`,
+    method: 'post',
+    data: formData
+  })
+}
+
+// 获取内容分级列表
+export function getContentRatingList(params) {
+  return request({
+    url: '/content_ratings',
+    method: 'get',
+    params
+  })
+}
+
+// 获取启用的内容分级列表（用于影片选择）
+export function getActiveContentRatings() {
+  return request({
+    url: '/content_ratings/active',
+    method: 'get'
+  })
+}
+
+// 获取内容分级详情
+export function getContentRatingDetail(id) {
+  return request({
+    url: `/content_ratings/${id}`,
+    method: 'get'
+  })
+}
+
+// 新增内容分级
+export function createContentRating(data) {
+  const formData = new FormData()
+  formData.append('code', data.code)
+  formData.append('label', data.label)
+  formData.append('description', data.description || '')
+  if (data.min_age !== '' && data.min_age !== null && data.min_age !== undefined) {
+    formData.append('min_age', data.min_age)
+  }
+  formData.append('color_hex', data.color_hex)
+  formData.append('status', data.status)
+  formData.append('sort_order', data.sort_order || 0)
+
+  return request({
+    url: '/content_ratings',
+    method: 'post',
+    data: formData
+  })
+}
+
+// 更新内容分级
+export function updateContentRating(id, data) {
+  const formData = new FormData()
+  formData.append('code', data.code)
+  formData.append('label', data.label)
+  formData.append('description', data.description || '')
+  if (data.min_age !== '' && data.min_age !== null && data.min_age !== undefined) {
+    formData.append('min_age', data.min_age)
+  }
+  formData.append('color_hex', data.color_hex)
+  formData.append('status', data.status)
+  formData.append('sort_order', data.sort_order || 0)
+
+  return request({
+    url: `/content_ratings/${id}`,
+    method: 'post',
+    data: formData
+  })
+}
+
+// 删除内容分级
+export function deleteContentRating(id) {
+  return request({
+    url: `/content_ratings/${id}`,
+    method: 'delete'
+  })
+}
+
+// 更新内容分级状态
+export function updateContentRatingStatus(id, status) {
+  const formData = new FormData()
+  formData.append('status', status)
+
+  return request({
+    url: `/content_ratings/${id}/status`,
     method: 'post',
     data: formData
   })

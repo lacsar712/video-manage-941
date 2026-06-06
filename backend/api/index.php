@@ -132,6 +132,13 @@ try {
         exit;
     }
 
+    // 内容分级管理
+    if (strpos($path, 'content_ratings') === 0) {
+        require __DIR__ . '/routes/content_ratings.php';
+        handleContentRatingRequest($path, $method, $tokenData);
+        exit;
+    }
+
     error('接口不存在', 404);
 
 } catch (Exception $e) {

@@ -36,6 +36,10 @@
           <el-icon><List /></el-icon>
           <span>专题合集</span>
         </el-menu-item>
+        <el-menu-item index="/content-ratings">
+          <el-icon><Tickets /></el-icon>
+          <span>内容分级</span>
+        </el-menu-item>
       </el-menu>
     </el-aside>
 
@@ -72,7 +76,7 @@
 import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessageBox, ElMessage } from 'element-plus'
-import { HomeFilled, VideoCamera, Film, UserFilled, SwitchButton, Clock, Picture, Promotion, List } from '@element-plus/icons-vue'
+import { HomeFilled, VideoCamera, Film, UserFilled, SwitchButton, Clock, Picture, Promotion, List, Tickets } from '@element-plus/icons-vue'
 import { logout } from '../api'
 
 const router = useRouter()
@@ -97,6 +101,9 @@ const activeMenu = computed(() => {
   if (path.startsWith('/collections')) {
     return '/collections'
   }
+  if (path.startsWith('/content-ratings')) {
+    return '/content-ratings'
+  }
   return path
 })
 
@@ -107,6 +114,7 @@ const breadcrumbName = computed(() => {
   if (path === '/videos/new') return '新增影片'
   if (path === '/collections') return '专题合集'
   if (path === '/collections/new') return '新增合集'
+  if (path === '/content-ratings') return '内容分级'
   if (path.includes('/edit')) {
     if (path.startsWith('/collections')) return '编辑合集'
     return '编辑影片'

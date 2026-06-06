@@ -27,11 +27,36 @@
               v-model="queryForm.status"
               placeholder="请选择状态"
               clearable
-              style="width: 200px"
+              style="width: 160px"
               @clear="handleQuery"
             >
               <el-option label="上架" value="1" />
               <el-option label="下架" value="0" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="内容分级">
+            <el-select
+              v-model="queryForm.content_rating_code"
+              placeholder="全部分级"
+              clearable
+              style="width: 180px"
+              @clear="handleQuery"
+            >
+              <el-option label="未设置分级" value="__unrated__" />
+              <el-option
+                v-for="item in ratingOptions"
+                :key="item.code"
+                :label="item.label"
+                :value="item.code"
+              >
+                <div class="filter-rating-option">
+                  <span
+                    class="filter-rating-tag"
+                    :style="{ backgroundColor: item.color_hex }"
+                  >{{ item.label }}</span>
+                  <span class="filter-rating-code">{{ item.code }}</span>
+                </div>
+              </el-option>
             </el-select>
           </el-form-item>
           <el-form-item>
@@ -41,9 +66,16 @@
         </el-form>
       </div>
 
-      <el-table :data="tableData" border stripe v-loading="loading">
+      <el-table :data="tableData" border stripe v-loading="loading" :row-class-name="getRowClassName">
         <el-table-column prop="id" label="ID" width="80" />
-        <el-table-column prop="title" label="影片标题" min-width="200" />
+        <el-table-column prop="title" label="影片标题" min-width="200">
+          <template #default="{ row }">
+            <div class="title-cell">
+              <span>{{ row.title }}</span>
+              <el-tag v-if="!row.content_rating_code" type="warning" size="small" effect="light" class="unrated-tag">未分级</el-tag>
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column prop="cover_url" label="封面" width="120">
           <template #default="{ row }">
             <div v-if="row.cover_url" class="cover-wrapper" @click="handlePreview(getCoverUrl(row.cover_url))">
@@ -51,11 +83,26 @@
                 :src="getCoverUrl(row.cover_url)"
                 :alt="row.title"
                 class="cover-image"
+                :class="{ 'cover-unrated': !row.content_rating_code }"
                 loading="lazy"
                 @error="handleImageError"
               />
             </div>
             <span v-else class="cover-empty">暂无</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="内容分级" width="160">
+          <template #default="{ row }">
+            <div v-if="row.content_rating_code" class="rating-cell">
+              <span
+                class="rating-tag"
+                :style="{ backgroundColor: row.content_rating_color }"
+              >
+                {{ row.content_rating_label }}
+              </span>
+              <span class="rating-code">{{ row.content_rating_code }}</span>
+            </div>
+            <span v-else class="rating-unassigned">未设置</span>
           </template>
         </el-table-column>
         <el-table-column prop="description" label="描述" min-width="200" show-overflow-tooltip />
@@ -108,7 +155,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getVideoList, deleteVideo, updateVideoStatus } from '../api'
+import { getVideoList, deleteVideo, updateVideoStatus, getActiveContentRatings } from '../api'
 
 const router = useRouter()
 const loading = ref(false)
@@ -116,12 +163,14 @@ const tableData = ref([])
 const total = ref(0)
 const previewUrl = ref('')
 const showViewer = ref(false)
+const ratingOptions = ref([])
 
 const queryForm = reactive({
   page: 1,
   page_size: 10,
   keyword: '',
-  status: ''
+  status: '',
+  content_rating_code: ''
 })
 
 // 获取封面完整URL
@@ -136,10 +185,32 @@ const getCoverUrl = (url) => {
   return baseURL ? `${baseURL}${url}` : url
 }
 
+// 未设置分级的行标灰
+const getRowClassName = ({ row }) => {
+  if (!row.content_rating_code) {
+    return 'row-unrated'
+  }
+  return ''
+}
+
+const fetchRatingOptions = async () => {
+  try {
+    const res = await getActiveContentRatings()
+    ratingOptions.value = res.data.list
+  } catch (error) {
+    console.error('获取内容分级选项失败：', error)
+  }
+}
+
 const fetchData = async () => {
   loading.value = true
   try {
-    const res = await getVideoList(queryForm)
+    const params = { ...queryForm }
+    if (params.content_rating_code === '__unrated__') {
+      params.only_unrated = 1
+      delete params.content_rating_code
+    }
+    const res = await getVideoList(params)
     tableData.value = res.data.list
     total.value = res.data.total
   } catch (error) {
@@ -168,6 +239,7 @@ const handleSizeChange = () => {
 const handleReset = () => {
   queryForm.keyword = ''
   queryForm.status = ''
+  queryForm.content_rating_code = ''
   handleQuery()
 }
 
@@ -245,6 +317,7 @@ const handleImageError = (e) => {
 }
 
 onMounted(() => {
+  fetchRatingOptions()
   fetchData()
 })
 </script>
@@ -333,5 +406,84 @@ onMounted(() => {
 .video-list :deep(.el-button--primary:hover) {
   background: #4f46e5;
   border-color: #4f46e5;
+}
+
+.title-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.unrated-tag {
+  flex-shrink: 0;
+}
+
+.video-list :deep(.el-table .row-unrated) {
+  --el-table-tr-bg-color: #fafafa;
+}
+
+.video-list :deep(.el-table .row-unrated td) {
+  color: #94a3b8;
+}
+
+.video-list :deep(.el-table .row-unrated .el-tag--warning) {
+  opacity: 1;
+}
+
+.cover-unrated {
+  filter: grayscale(80%) opacity(0.7);
+}
+
+.rating-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rating-tag {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.rating-code {
+  font-size: 12px;
+  color: #94a3b8;
+  font-family: monospace;
+}
+
+.rating-unassigned {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: #f1f5f9;
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.filter-rating-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-rating-tag {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 3px;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.filter-rating-code {
+  font-size: 12px;
+  color: #64748b;
+  font-family: monospace;
 }
 </style>

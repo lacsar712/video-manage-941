@@ -81,6 +81,32 @@
 					/>
 				</el-form-item>
 
+				<el-form-item label="内容分级" prop="content_rating_code">
+					<el-select
+						v-model="form.content_rating_code"
+						placeholder="请选择内容分级（选填）"
+						clearable
+						style="width: 320px"
+					>
+						<el-option
+							v-for="item in ratingOptions"
+							:key="item.code"
+							:label="item.label"
+							:value="item.code"
+						>
+							<div class="rating-option">
+								<span
+									class="rating-option-tag"
+									:style="{ backgroundColor: item.color_hex }"
+								>{{ item.label }}</span>
+								<span class="rating-option-code">{{ item.code }}</span>
+								<span v-if="item.min_age" class="rating-option-age">{{ item.min_age }}岁+</span>
+							</div>
+						</el-option>
+					</el-select>
+					<div class="form-tip">未设置分级的影片将标灰提醒</div>
+				</el-form-item>
+
 				<el-form-item label="状态" prop="status">
 					<el-radio-group v-model="form.status" size="large">
 						<el-radio :label="1" border>上架</el-radio>
@@ -172,13 +198,14 @@ import { ref, reactive, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { Plus, Upload, Picture, Search } from '@element-plus/icons-vue'
-import { getVideoDetail, createVideo, updateVideo, getMediaList } from '../api'
+import { getVideoDetail, createVideo, updateVideo, getMediaList, getActiveContentRatings } from '../api'
 
 const router = useRouter()
 const route = useRoute()
 const formRef = ref(null)
 const loading = ref(false)
 const isEdit = ref(false)
+const ratingOptions = ref([])
 
 const mediaPickerVisible = ref(false)
 const mediaLoading = ref(false)
@@ -204,6 +231,7 @@ const form = reactive({
 	title: '',
 	cover_url: '',
 	description: '',
+	content_rating_code: '',
 	status: 1,
 })
 
@@ -352,8 +380,18 @@ const handleCancel = () => {
 	router.back()
 }
 
+const fetchRatingOptions = async () => {
+	try {
+		const res = await getActiveContentRatings()
+		ratingOptions.value = res.data.list
+	} catch (error) {
+		console.error('获取内容分级选项失败：', error)
+	}
+}
+
 onMounted(() => {
 	isEdit.value = !!route.params.id
+	fetchRatingOptions()
 	if (isEdit.value) {
 		fetchDetail()
 	}
@@ -522,5 +560,38 @@ onMounted(() => {
 .media-picker-pagination {
 	display: flex;
 	justify-content: center;
+}
+
+.rating-option {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.rating-option-tag {
+	display: inline-block;
+	padding: 2px 8px;
+	border-radius: 4px;
+	color: #fff;
+	font-size: 12px;
+	font-weight: 500;
+	line-height: 1.4;
+}
+
+.rating-option-code {
+	font-size: 12px;
+	color: #64748b;
+	font-family: monospace;
+}
+
+.rating-option-age {
+	font-size: 12px;
+	color: #94a3b8;
+}
+
+.form-tip {
+	margin-top: 4px;
+	font-size: 12px;
+	color: #94a3b8;
 }
 </style>

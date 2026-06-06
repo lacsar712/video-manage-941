@@ -31,10 +31,12 @@ CREATE TABLE IF NOT EXISTS video (
     title VARCHAR(200) NOT NULL,
     cover_url VARCHAR(255) NOT NULL,
     description TEXT,
+    content_rating_code VARCHAR(20) DEFAULT NULL COMMENT '内容分级编码',
     status TINYINT NOT NULL DEFAULT 1 COMMENT '1上架 0下架',
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_status (status)
+    INDEX idx_status (status),
+    INDEX idx_content_rating (content_rating_code)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- 表4：video_source（播放源）
@@ -191,3 +193,27 @@ CREATE TABLE IF NOT EXISTS video_subtitle (
     INDEX idx_language (language),
     INDEX idx_status (status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- 表12：content_rating（内容分级标准）
+CREATE TABLE IF NOT EXISTS content_rating (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    code VARCHAR(20) UNIQUE NOT NULL COMMENT '分级编码，如 PG-13',
+    label VARCHAR(50) NOT NULL COMMENT '分级标签显示名称',
+    description VARCHAR(500) COMMENT '分级描述说明',
+    min_age INT DEFAULT NULL COMMENT '最低年龄限制',
+    color_hex VARCHAR(7) NOT NULL DEFAULT '#6366f1' COMMENT '标签颜色（十六进制）',
+    status TINYINT NOT NULL DEFAULT 1 COMMENT '状态：1启用 0禁用',
+    sort_order INT NOT NULL DEFAULT 0 COMMENT '排序值，越大越靠前',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_status (status),
+    INDEX idx_code (code)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- 插入内容分级标准种子数据
+INSERT INTO content_rating (code, label, description, min_age, color_hex, status, sort_order) VALUES
+('G', '通用级', '所有年龄均可观看，适合全年龄段观众', NULL, '#22c55e', 1, 10),
+('PG', '辅导级', '建议在家长指导下观看，部分内容可能不适合儿童', NULL, '#3b82f6', 1, 20),
+('PG-13', '特别辅导级', '13岁以下儿童需在家长陪同下观看，可能含有暴力、粗口等内容', 13, '#f59e0b', 1, 30),
+('R', '限制级', '17岁以下青少年需在家长或成年监护人陪同下观看，含有成人内容', 17, '#ef4444', 1, 40),
+('NC-17', '成人级', '仅限18岁以上成人观看，含有明确的成人内容', 18, '#7f1d1d', 1, 50);

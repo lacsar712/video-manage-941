@@ -78,6 +78,11 @@ const routes = [
         path: 'collections/:id',
         name: 'VideoCollectionDetail',
         component: () => import('../views/VideoCollectionDetail.vue')
+      },
+      {
+        path: 'content-ratings',
+        name: 'ContentRating',
+        component: () => import('../views/ContentRating.vue')
       }
     ]
   }

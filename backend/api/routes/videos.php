@@ -5,6 +5,8 @@ function getVideoList() {
     $pageSize = intval($_GET['page_size'] ?? 10);
     $status = $_GET['status'] ?? '';
     $keyword = $_GET['keyword'] ?? '';
+    $contentRatingCode = $_GET['content_rating_code'] ?? '';
+    $onlyUnrated = $_GET['only_unrated'] ?? '';
 
     $page = max(1, $page);
     $pageSize = min(100, max(1, $pageSize));
@@ -18,29 +20,40 @@ function getVideoList() {
         $params = [];
 
         if ($status !== '') {
-            $where[] = "status = ?";
+            $where[] = "v.status = ?";
             $params[] = $status;
         }
 
         if ($keyword !== '') {
-            $where[] = "title LIKE ?";
+            $where[] = "v.title LIKE ?";
             $params[] = "%{$keyword}%";
+        }
+
+        if ($contentRatingCode !== '') {
+            $where[] = "v.content_rating_code = ?";
+            $params[] = $contentRatingCode;
+        }
+
+        if ($onlyUnrated === '1' || $onlyUnrated === 'true') {
+            $where[] = "v.content_rating_code IS NULL OR v.content_rating_code = ''";
         }
 
         $whereClause = empty($where) ? '' : 'WHERE ' . implode(' AND ', $where);
 
         // 查询总数
-        $stmt = $db->prepare("SELECT COUNT(*) as total FROM video {$whereClause}");
+        $stmt = $db->prepare("SELECT COUNT(*) as total FROM video v {$whereClause}");
         $stmt->execute($params);
         $total = $stmt->fetch()['total'];
 
         // 查询列表
         $stmt = $db->prepare("
-            SELECT id, title, cover_url, description, status,
-                   created_at, updated_at
-            FROM video
+            SELECT v.id, v.title, v.cover_url, v.description, v.content_rating_code,
+                   v.status, v.created_at, v.updated_at,
+                   cr.label as content_rating_label, cr.color_hex as content_rating_color
+            FROM video v
+            LEFT JOIN content_rating cr ON v.content_rating_code = cr.code
             {$whereClause}
-            ORDER BY id DESC
+            ORDER BY v.id DESC
             LIMIT {$offset}, {$pageSize}
         ");
         $stmt->execute($params);
@@ -70,7 +83,12 @@ function getVideoDetail($id) {
 
     try {
         $db = getDB();
-        $stmt = $db->prepare("SELECT * FROM video WHERE id = ?");
+        $stmt = $db->prepare("
+            SELECT v.*, cr.label as content_rating_label, cr.color_hex as content_rating_color
+            FROM video v
+            LEFT JOIN content_rating cr ON v.content_rating_code = cr.code
+            WHERE v.id = ?
+        ");
         $stmt->execute([$id]);
         $video = $stmt->fetch();
 
@@ -93,6 +111,7 @@ function createVideo() {
     $title = $_POST['title'] ?? '';
     $coverUrl = $_POST['cover_url'] ?? '';
     $description = $_POST['description'] ?? '';
+    $contentRatingCode = $_POST['content_rating_code'] ?? '';
     $status = $_POST['status'] ?? 1;
 
     // 验证必填
@@ -114,13 +133,18 @@ function createVideo() {
     }
     $status = intval($status); // 统一转换为整数
 
+    // 处理 content_rating_code，空字符串转为 NULL
+    if ($contentRatingCode === '') {
+        $contentRatingCode = null;
+    }
+
     try {
         $db = getDB();
         $stmt = $db->prepare("
-            INSERT INTO video (title, cover_url, description, status, created_at, updated_at)
-            VALUES (?, ?, ?, ?, NOW(), NOW())
+            INSERT INTO video (title, cover_url, description, content_rating_code, status, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, NOW(), NOW())
         ");
-        $stmt->execute([$title, $coverUrl, $description, $status]);
+        $stmt->execute([$title, $coverUrl, $description, $contentRatingCode, $status]);
 
         $videoId = $db->lastInsertId();
 
@@ -138,6 +162,7 @@ function updateVideo($id) {
     $title = $_POST['title'] ?? '';
     $coverUrl = $_POST['cover_url'] ?? '';
     $description = $_POST['description'] ?? '';
+    $contentRatingCode = $_POST['content_rating_code'] ?? '';
     $status = $_POST['status'] ?? '';
 
     // 验证必填
@@ -160,6 +185,11 @@ function updateVideo($id) {
     }
     $status = intval($status); // 统一转换为整数
 
+    // 处理 content_rating_code，空字符串转为 NULL
+    if ($contentRatingCode === '') {
+        $contentRatingCode = null;
+    }
+
     try {
         $db = getDB();
 
@@ -173,10 +203,10 @@ function updateVideo($id) {
         // 更新影片
         $stmt = $db->prepare("
             UPDATE video
-            SET title = ?, cover_url = ?, description = ?, status = ?, updated_at = NOW()
+            SET title = ?, cover_url = ?, description = ?, content_rating_code = ?, status = ?, updated_at = NOW()
             WHERE id = ?
         ");
-        $stmt->execute([$title, $coverUrl, $description, $status, $id]);
+        $stmt->execute([$title, $coverUrl, $description, $contentRatingCode, $status, $id]);
 
         success(null, '更新成功');
 
