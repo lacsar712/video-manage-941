@@ -43,6 +43,11 @@ const routes = [
         path: 'scheduled-tasks',
         name: 'ScheduledTasks',
         component: () => import('../views/ScheduledTasks.vue')
+      },
+      {
+        path: 'media',
+        name: 'MediaLibrary',
+        component: () => import('../views/MediaLibrary.vue')
       }
     ]
   }

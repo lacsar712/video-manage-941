@@ -166,3 +166,20 @@ export function cancelScheduledTask(id) {
     method: 'post'
   })
 }
+
+// 获取媒资列表
+export function getMediaList(params) {
+  return request({
+    url: '/media',
+    method: 'get',
+    params
+  })
+}
+
+// 删除媒资
+export function deleteMedia(id) {
+  return request({
+    url: `/media/${id}`,
+    method: 'delete'
+  })
+}

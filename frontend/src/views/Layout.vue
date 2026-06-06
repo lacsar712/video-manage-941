@@ -24,6 +24,10 @@
           <el-icon><Clock /></el-icon>
           <span>定时任务</span>
         </el-menu-item>
+        <el-menu-item index="/media">
+          <el-icon><Picture /></el-icon>
+          <span>媒资库</span>
+        </el-menu-item>
       </el-menu>
     </el-aside>
 
@@ -60,7 +64,7 @@
 import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessageBox, ElMessage } from 'element-plus'
-import { HomeFilled, VideoCamera, Film, UserFilled, SwitchButton, Clock } from '@element-plus/icons-vue'
+import { HomeFilled, VideoCamera, Film, UserFilled, SwitchButton, Clock, Picture } from '@element-plus/icons-vue'
 import { logout } from '../api'
 
 const router = useRouter()
@@ -76,6 +80,9 @@ const activeMenu = computed(() => {
   if (path.startsWith('/scheduled-tasks')) {
     return '/scheduled-tasks'
   }
+  if (path.startsWith('/media')) {
+    return '/media'
+  }
   return path
 })
 
@@ -87,6 +94,7 @@ const breadcrumbName = computed(() => {
   if (path.includes('/edit')) return '编辑影片'
   if (path.includes('/sources')) return '播放源管理'
   if (path.startsWith('/scheduled-tasks')) return '定时任务'
+  if (path.startsWith('/media')) return '媒资库'
   return ''
 })
 

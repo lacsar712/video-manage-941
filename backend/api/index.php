@@ -100,7 +100,14 @@ try {
     // 文件上传
     if (strpos($path, 'upload/') === 0) {
         require __DIR__ . '/routes/upload.php';
-        handleUploadRequest($path, $method);
+        handleUploadRequest($path, $method, $tokenData);
+        exit;
+    }
+
+    // 媒资库管理
+    if (strpos($path, 'media') === 0) {
+        require __DIR__ . '/routes/media.php';
+        handleMediaRequest($path, $method, $tokenData);
         exit;
     }
 

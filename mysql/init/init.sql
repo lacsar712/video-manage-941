@@ -118,3 +118,17 @@ CREATE TABLE IF NOT EXISTS operation_log (
     INDEX idx_module (module),
     INDEX idx_created_at (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- 表7：media_asset（媒资库）
+CREATE TABLE IF NOT EXISTS media_asset (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    file_path VARCHAR(255) NOT NULL COMMENT '文件存储路径',
+    original_name VARCHAR(255) NOT NULL COMMENT '原始文件名',
+    mime_type VARCHAR(100) NOT NULL COMMENT 'MIME类型',
+    size_bytes BIGINT NOT NULL COMMENT '文件大小（字节）',
+    uploaded_by BIGINT NOT NULL COMMENT '上传人ID',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_created_at (created_at),
+    INDEX idx_uploaded_by (uploaded_by),
+    INDEX idx_file_path (file_path)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
