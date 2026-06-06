@@ -252,3 +252,111 @@ export function updateClientReleaseStatus(id, status) {
     }
   })
 }
+
+// 获取专题合集列表
+export function getCollectionList(params) {
+  return request({
+    url: '/collections',
+    method: 'get',
+    params
+  })
+}
+
+// 获取专题合集详情
+export function getCollectionDetail(id) {
+  return request({
+    url: `/collections/${id}`,
+    method: 'get'
+  })
+}
+
+// 新增专题合集
+export function createCollection(data) {
+  const formData = new FormData()
+  formData.append('title', data.title)
+  formData.append('cover_url', data.cover_url)
+  formData.append('description', data.description || '')
+  formData.append('sort_order', data.sort_order || 0)
+  formData.append('status', data.status)
+  if (data.video_ids && data.video_ids.length > 0) {
+    data.video_ids.forEach((vid, idx) => {
+      formData.append(`video_ids[${idx}]`, vid)
+    })
+  }
+  return request({
+    url: '/collections',
+    method: 'post',
+    data: formData
+  })
+}
+
+// 更新专题合集
+export function updateCollection(id, data) {
+  const formData = new FormData()
+  formData.append('title', data.title)
+  formData.append('cover_url', data.cover_url)
+  formData.append('description', data.description || '')
+  formData.append('sort_order', data.sort_order || 0)
+  formData.append('status', data.status)
+  if (data.video_ids && data.video_ids.length > 0) {
+    data.video_ids.forEach((vid, idx) => {
+      formData.append(`video_ids[${idx}]`, vid)
+    })
+  }
+  return request({
+    url: `/collections/${id}`,
+    method: 'post',
+    data: formData
+  })
+}
+
+// 删除专题合集
+export function deleteCollection(id) {
+  return request({
+    url: `/collections/${id}`,
+    method: 'delete'
+  })
+}
+
+// 更新专题合集状态
+export function updateCollectionStatus(id, status) {
+  const formData = new FormData()
+  formData.append('status', status)
+  return request({
+    url: `/collections/${id}/status`,
+    method: 'post',
+    data: formData
+  })
+}
+
+// 向合集添加影片
+export function addVideosToCollection(id, videoIds) {
+  return request({
+    url: `/collections/${id}/videos`,
+    method: 'post',
+    data: { video_ids: videoIds },
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+}
+
+// 从合集移除影片
+export function removeVideoFromCollection(id, videoId) {
+  return request({
+    url: `/collections/${id}/videos/${videoId}`,
+    method: 'delete'
+  })
+}
+
+// 更新合集内影片排序
+export function updateCollectionVideoSort(id, videoOrders) {
+  return request({
+    url: `/collections/${id}/sort`,
+    method: 'post',
+    data: { video_orders: videoOrders },
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+}

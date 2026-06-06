@@ -118,6 +118,13 @@ try {
         exit;
     }
 
+    // 专题合集管理
+    if (strpos($path, 'collections') === 0) {
+        require __DIR__ . '/routes/collections.php';
+        handleCollectionRequest($path, $method);
+        exit;
+    }
+
     error('接口不存在', 404);
 
 } catch (Exception $e) {

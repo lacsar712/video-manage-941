@@ -53,6 +53,26 @@ const routes = [
         path: 'client-releases',
         name: 'ClientReleases',
         component: () => import('../views/ClientReleases.vue')
+      },
+      {
+        path: 'collections',
+        name: 'VideoCollectionList',
+        component: () => import('../views/VideoCollectionList.vue')
+      },
+      {
+        path: 'collections/new',
+        name: 'VideoCollectionNew',
+        component: () => import('../views/VideoCollectionForm.vue')
+      },
+      {
+        path: 'collections/:id/edit',
+        name: 'VideoCollectionEdit',
+        component: () => import('../views/VideoCollectionForm.vue')
+      },
+      {
+        path: 'collections/:id',
+        name: 'VideoCollectionDetail',
+        component: () => import('../views/VideoCollectionDetail.vue')
       }
     ]
   }

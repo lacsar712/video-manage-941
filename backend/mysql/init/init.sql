@@ -149,3 +149,29 @@ CREATE TABLE IF NOT EXISTS client_release (
     INDEX idx_status (status),
     INDEX idx_platform_status (platform, status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- 表9：video_collection（专题合集）
+CREATE TABLE IF NOT EXISTS video_collection (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(200) NOT NULL COMMENT '合集标题',
+    cover_url VARCHAR(255) NOT NULL COMMENT '合集封面',
+    description TEXT COMMENT '合集描述',
+    sort_order INT NOT NULL DEFAULT 0 COMMENT '排序值，越大越靠前',
+    status TINYINT NOT NULL DEFAULT 1 COMMENT '1上架 0下架',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_status (status),
+    INDEX idx_sort_order (sort_order)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- 表10：collection_video（合集-影片关联）
+CREATE TABLE IF NOT EXISTS collection_video (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    collection_id BIGINT NOT NULL COMMENT '合集ID',
+    video_id BIGINT NOT NULL COMMENT '影片ID',
+    sort_order INT NOT NULL DEFAULT 0 COMMENT '排序值，越大越靠前',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uk_collection_video (collection_id, video_id),
+    INDEX idx_collection_id (collection_id),
+    INDEX idx_video_id (video_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

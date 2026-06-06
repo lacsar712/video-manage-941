@@ -32,6 +32,10 @@
           <el-icon><Promotion /></el-icon>
           <span>版本档案</span>
         </el-menu-item>
+        <el-menu-item index="/collections">
+          <el-icon><List /></el-icon>
+          <span>专题合集</span>
+        </el-menu-item>
       </el-menu>
     </el-aside>
 
@@ -68,7 +72,7 @@
 import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessageBox, ElMessage } from 'element-plus'
-import { HomeFilled, VideoCamera, Film, UserFilled, SwitchButton, Clock, Picture, Promotion } from '@element-plus/icons-vue'
+import { HomeFilled, VideoCamera, Film, UserFilled, SwitchButton, Clock, Picture, Promotion, List } from '@element-plus/icons-vue'
 import { logout } from '../api'
 
 const router = useRouter()
@@ -90,6 +94,9 @@ const activeMenu = computed(() => {
   if (path.startsWith('/client-releases')) {
     return '/client-releases'
   }
+  if (path.startsWith('/collections')) {
+    return '/collections'
+  }
   return path
 })
 
@@ -98,11 +105,17 @@ const breadcrumbName = computed(() => {
   if (path === '/dashboard') return '首页'
   if (path === '/videos') return '影片管理'
   if (path === '/videos/new') return '新增影片'
-  if (path.includes('/edit')) return '编辑影片'
+  if (path === '/collections') return '专题合集'
+  if (path === '/collections/new') return '新增合集'
+  if (path.includes('/edit')) {
+    if (path.startsWith('/collections')) return '编辑合集'
+    return '编辑影片'
+  }
   if (path.includes('/sources')) return '播放源管理'
   if (path.startsWith('/scheduled-tasks')) return '定时任务'
   if (path.startsWith('/media')) return '媒资库'
   if (path.startsWith('/client-releases')) return '版本档案'
+  if (path.match(/^\/collections\/\d+$/)) return '合集详情'
   return ''
 })
 
