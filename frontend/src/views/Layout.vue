@@ -48,6 +48,10 @@
           <el-icon><Bell /></el-icon>
           <span>公告管理</span>
         </el-menu-item>
+        <el-menu-item index="/reports">
+          <el-icon><DataAnalysis /></el-icon>
+          <span>数据报表</span>
+        </el-menu-item>
       </el-menu>
     </el-aside>
 
@@ -122,7 +126,7 @@
 import { ref, computed, onMounted, watch, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessageBox, ElMessage } from 'element-plus'
-import { HomeFilled, VideoCamera, Film, UserFilled, SwitchButton, Clock, Picture, Promotion, List, Tickets, MagicStick, Bell, Close } from '@element-plus/icons-vue'
+import { HomeFilled, VideoCamera, Film, UserFilled, SwitchButton, Clock, Picture, Promotion, List, Tickets, MagicStick, Bell, Close, DataAnalysis } from '@element-plus/icons-vue'
 import { logout, getActiveAnnouncements } from '../api'
 
 const router = useRouter()
@@ -206,6 +210,9 @@ const activeMenu = computed(() => {
   if (path.startsWith('/announcements')) {
     return '/announcements'
   }
+  if (path.startsWith('/reports')) {
+    return '/reports'
+  }
   return path
 })
 
@@ -219,6 +226,7 @@ const breadcrumbName = computed(() => {
   if (path === '/content-ratings') return '内容分级'
   if (path === '/recommend-slots') return '推荐位编排'
   if (path === '/announcements') return '公告管理'
+  if (path === '/reports') return '数据报表'
   if (path.includes('/edit')) {
     if (path.startsWith('/collections')) return '编辑合集'
     return '编辑影片'

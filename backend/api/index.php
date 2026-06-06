@@ -153,6 +153,13 @@ try {
         exit;
     }
 
+    // 数据报表
+    if (strpos($path, 'reports') === 0) {
+        require __DIR__ . '/routes/reports.php';
+        handleReportRequest($path, $method, $tokenData);
+        exit;
+    }
+
     error('接口不存在', 404);
 
 } catch (Exception $e) {

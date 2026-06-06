@@ -250,7 +250,20 @@ INSERT INTO recommend_slot (slot_key, title, max_items, status, sort_order, crea
 ('home_new', '最新上线', 8, 1, 90, NOW(), NOW()),
 ('home_classic', '经典回顾', 6, 1, 80, NOW(), NOW());
 
--- 表15：announcement（系统公告）
+-- 表15：daily_stats_snapshot（每日运营数据快照）
+CREATE TABLE IF NOT EXISTS daily_stats_snapshot (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    stat_date DATE NOT NULL COMMENT '统计日期',
+    video_total INT NOT NULL DEFAULT 0 COMMENT '影片总量',
+    video_published INT NOT NULL DEFAULT 0 COMMENT '已上架影片数',
+    source_total INT NOT NULL DEFAULT 0 COMMENT '播放源总量',
+    new_videos INT NOT NULL DEFAULT 0 COMMENT '当日新增影片数',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uk_stat_date (stat_date),
+    INDEX idx_stat_date (stat_date)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- 表16：announcement（系统公告）
 CREATE TABLE IF NOT EXISTS announcement (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     title VARCHAR(200) NOT NULL COMMENT '公告标题',

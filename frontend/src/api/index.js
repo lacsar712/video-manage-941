@@ -670,3 +670,20 @@ export function updateAnnouncementStatus(id, status) {
     }
   })
 }
+
+// 获取每日运营数据快照
+export function getDailyStatsSnapshot(params) {
+  return request({
+    url: '/reports/snapshot',
+    method: 'get',
+    params
+  })
+}
+
+// 手动生成今日数据快照
+export function createSnapshotToday() {
+  return request({
+    url: '/reports/snapshot',
+    method: 'post'
+  })
+}

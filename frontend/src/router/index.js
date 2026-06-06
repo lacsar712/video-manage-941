@@ -93,6 +93,11 @@ const routes = [
         path: 'announcements',
         name: 'AnnouncementManage',
         component: () => import('../views/AnnouncementManage.vue')
+      },
+      {
+        path: 'reports',
+        name: 'Reports',
+        component: () => import('../views/Reports.vue')
       }
     ]
   }
