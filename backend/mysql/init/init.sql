@@ -249,3 +249,20 @@ INSERT INTO recommend_slot (slot_key, title, max_items, status, sort_order, crea
 ('home_hot', '热门推荐', 6, 1, 100, NOW(), NOW()),
 ('home_new', '最新上线', 8, 1, 90, NOW(), NOW()),
 ('home_classic', '经典回顾', 6, 1, 80, NOW(), NOW());
+
+-- 表15：announcement（系统公告）
+CREATE TABLE IF NOT EXISTS announcement (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(200) NOT NULL COMMENT '公告标题',
+    content TEXT NOT NULL COMMENT '公告内容（支持富文本或纯文本）',
+    type VARCHAR(20) NOT NULL DEFAULT 'update' COMMENT '公告类型：maintenance维护 / update更新',
+    start_at DATETIME NOT NULL COMMENT '生效开始时间',
+    end_at DATETIME NOT NULL COMMENT '生效结束时间',
+    status TINYINT NOT NULL DEFAULT 1 COMMENT '状态：1启用 0禁用',
+    created_by BIGINT NOT NULL COMMENT '创建人ID',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_status (status),
+    INDEX idx_start_end (start_at, end_at),
+    INDEX idx_type (type)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

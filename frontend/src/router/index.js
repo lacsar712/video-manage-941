@@ -88,6 +88,11 @@ const routes = [
         path: 'recommend-slots',
         name: 'RecommendSlots',
         component: () => import('../views/RecommendSlots.vue')
+      },
+      {
+        path: 'announcements',
+        name: 'AnnouncementManage',
+        component: () => import('../views/AnnouncementManage.vue')
       }
     ]
   }

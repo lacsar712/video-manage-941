@@ -601,3 +601,72 @@ export function updateRecommendItemSort(id, videoOrders) {
     }
   })
 }
+
+// 获取公告列表
+export function getAnnouncementList(params) {
+  return request({
+    url: '/announcements',
+    method: 'get',
+    params
+  })
+}
+
+// 获取当前生效的公告
+export function getActiveAnnouncements() {
+  return request({
+    url: '/announcements/active',
+    method: 'get'
+  })
+}
+
+// 获取公告详情
+export function getAnnouncementDetail(id) {
+  return request({
+    url: `/announcements/${id}`,
+    method: 'get'
+  })
+}
+
+// 新增公告
+export function createAnnouncement(data) {
+  return request({
+    url: '/announcements',
+    method: 'post',
+    data,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+}
+
+// 更新公告
+export function updateAnnouncement(id, data) {
+  return request({
+    url: `/announcements/${id}`,
+    method: 'post',
+    data,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+}
+
+// 删除公告
+export function deleteAnnouncement(id) {
+  return request({
+    url: `/announcements/${id}`,
+    method: 'delete'
+  })
+}
+
+// 更新公告状态
+export function updateAnnouncementStatus(id, status) {
+  return request({
+    url: `/announcements/${id}/status`,
+    method: 'post',
+    data: { status },
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+}

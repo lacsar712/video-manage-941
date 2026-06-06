@@ -44,10 +44,52 @@
           <el-icon><MagicStick /></el-icon>
           <span>推荐位编排</span>
         </el-menu-item>
+        <el-menu-item index="/announcements">
+          <el-icon><Bell /></el-icon>
+          <span>公告管理</span>
+        </el-menu-item>
       </el-menu>
     </el-aside>
 
     <el-container class="main-area">
+      <div v-if="showAnnouncementBar" class="announcement-bar">
+        <div class="announcement-icon">
+          <el-icon :size="16"><Bell /></el-icon>
+        </div>
+        <div class="announcement-marquee">
+          <div class="marquee-track" :style="{ animationDuration: marqueeDuration + 's' }">
+            <span
+              v-for="(item, idx) in announcementList"
+              :key="item.id"
+              class="marquee-item"
+            >
+              <el-tag
+                :type="item.type === 'maintenance' ? 'warning' : 'primary'"
+                size="small"
+                effect="dark"
+                class="announcement-tag"
+              >
+                {{ item.type === 'maintenance' ? '维护' : '更新' }}
+              </el-tag>
+              <span class="announcement-title">{{ item.title }}</span>
+              <span
+                v-if="idx < announcementList.length - 1"
+                class="announcement-sep"
+              >&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+            </span>
+          </div>
+        </div>
+        <el-button
+          class="announcement-close"
+          text
+          type="info"
+          size="small"
+          @click.stop="handleCloseAnnouncement"
+        >
+          <el-icon><Close /></el-icon>
+        </el-button>
+      </div>
+
       <el-header class="top-header">
         <div class="header-content">
           <div class="breadcrumb">
@@ -77,16 +119,66 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, watch, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessageBox, ElMessage } from 'element-plus'
-import { HomeFilled, VideoCamera, Film, UserFilled, SwitchButton, Clock, Picture, Promotion, List, Tickets, MagicStick } from '@element-plus/icons-vue'
-import { logout } from '../api'
+import { HomeFilled, VideoCamera, Film, UserFilled, SwitchButton, Clock, Picture, Promotion, List, Tickets, MagicStick, Bell, Close } from '@element-plus/icons-vue'
+import { logout, getActiveAnnouncements } from '../api'
 
 const router = useRouter()
 const route = useRoute()
 
 const username = ref(localStorage.getItem('username') || 'admin')
+const announcementList = ref([])
+const showAnnouncementBar = ref(false)
+const marqueeDuration = ref(30)
+
+const DISMISS_KEY = 'announcement_dismissed_ids'
+
+const getDismissedIds = () => {
+  try {
+    const raw = sessionStorage.getItem(DISMISS_KEY)
+    return raw ? JSON.parse(raw) : []
+  } catch {
+    return []
+  }
+}
+
+const setDismissedIds = (ids) => {
+  sessionStorage.setItem(DISMISS_KEY, JSON.stringify(ids))
+}
+
+const shouldShowAnnouncement = (item) => {
+  const dismissed = getDismissedIds()
+  return !dismissed.includes(item.id)
+}
+
+const fetchActiveAnnouncements = async () => {
+  try {
+    const res = await getActiveAnnouncements()
+    const all = res.data || []
+    announcementList.value = all.filter(shouldShowAnnouncement)
+    await nextTick()
+    updateMarqueeDuration()
+  } catch (error) {
+    console.error('获取公告失败：', error)
+  }
+}
+
+const updateMarqueeDuration = () => {
+  const track = document.querySelector('.marquee-track')
+  if (track) {
+    const width = track.scrollWidth
+    marqueeDuration.value = Math.max(20, Math.ceil(width / 50))
+  }
+}
+
+const handleCloseAnnouncement = () => {
+  const dismissed = getDismissedIds()
+  const newIds = [...new Set([...dismissed, ...announcementList.value.map(a => a.id)])]
+  setDismissedIds(newIds)
+  showAnnouncementBar.value = false
+}
 
 const activeMenu = computed(() => {
   const path = route.path
@@ -111,6 +203,9 @@ const activeMenu = computed(() => {
   if (path.startsWith('/recommend-slots')) {
     return '/recommend-slots'
   }
+  if (path.startsWith('/announcements')) {
+    return '/announcements'
+  }
   return path
 })
 
@@ -123,6 +218,7 @@ const breadcrumbName = computed(() => {
   if (path === '/collections/new') return '新增合集'
   if (path === '/content-ratings') return '内容分级'
   if (path === '/recommend-slots') return '推荐位编排'
+  if (path === '/announcements') return '公告管理'
   if (path.includes('/edit')) {
     if (path.startsWith('/collections')) return '编辑合集'
     return '编辑影片'
@@ -146,6 +242,7 @@ const handleLogout = async () => {
     await logout()
     localStorage.removeItem('token')
     localStorage.removeItem('username')
+    sessionStorage.removeItem(DISMISS_KEY)
     ElMessage.success('退出成功')
     router.push('/login')
   } catch (error) {
@@ -154,6 +251,14 @@ const handleLogout = async () => {
     }
   }
 }
+
+watch(announcementList, (list) => {
+  showAnnouncementBar.value = list && list.length > 0
+}, { immediate: true })
+
+onMounted(() => {
+  fetchActiveAnnouncements()
+})
 </script>
 
 <style scoped>
@@ -211,6 +316,73 @@ const handleLogout = async () => {
 
 .sidebar :deep(.el-menu-item.is-active .el-icon) {
   color: #818cf8;
+}
+
+.announcement-bar {
+  height: 36px;
+  background: linear-gradient(90deg, #fef3c7 0%, #fde68a 100%);
+  border-bottom: 1px solid #fcd34d;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+.announcement-icon {
+  color: #d97706;
+  flex-shrink: 0;
+}
+
+.announcement-marquee {
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.marquee-track {
+  display: inline-block;
+  white-space: nowrap;
+  animation: marquee linear infinite;
+  padding-left: 100%;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.marquee-item {
+  display: inline-block;
+  font-size: 13px;
+  color: #92400e;
+}
+
+.announcement-tag {
+  margin-right: 8px;
+}
+
+.announcement-title {
+  font-weight: 500;
+}
+
+.announcement-sep {
+  color: #d97706;
+  opacity: 0.6;
+}
+
+.announcement-close {
+  flex-shrink: 0;
+  color: #92400e !important;
+}
+
+.announcement-close :deep(.el-icon) {
+  font-size: 16px;
 }
 
 .top-header {

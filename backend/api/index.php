@@ -146,6 +146,13 @@ try {
         exit;
     }
 
+    // 公告管理
+    if (strpos($path, 'announcements') === 0) {
+        require __DIR__ . '/routes/announcements.php';
+        handleAnnouncementRequest($path, $method, $tokenData);
+        exit;
+    }
+
     error('接口不存在', 404);
 
 } catch (Exception $e) {
