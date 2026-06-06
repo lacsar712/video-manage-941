@@ -1,0 +1,83 @@
+version: '3.8'
+
+services:
+  # 前端服务（自动构建）
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: video_frontend
+    volumes:
+      - frontend_dist:/usr/share/nginx/html/admin
+    networks:
+      - video_network
+
+  nginx:
+    image: nginx:stable
+    container_name: video_nginx
+    ports:
+      - "3000:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./backend:/var/www/html
+      - frontend_dist:/usr/share/nginx/html/admin:ro
+    depends_on:
+      - php
+      - frontend
+    networks:
+      - video_network
+
+  php:
+    image: php:8.2-fpm
+    container_name: video_php
+    volumes:
+      - ./backend:/var/www/html
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - video_network
+    environment:
+      - DB_HOST=mysql
+      - DB_NAME=video_app
+      - DB_USER=root
+      - DB_PASS=root123
+    command: >
+      bash -c "
+      docker-php-ext-install pdo pdo_mysql mysqli &&
+      docker-php-ext-enable opcache &&
+      echo 'opcache.enable=1' >> /usr/local/etc/php/conf.d/opcache.ini &&
+      echo 'opcache.memory_consumption=128' >> /usr/local/etc/php/conf.d/opcache.ini &&
+      echo 'opcache.max_accelerated_files=10000' >> /usr/local/etc/php/conf.d/opcache.ini &&
+      php-fpm
+      "
+
+  mysql:
+    image: mysql:8.0
+    container_name: video_mysql
+    ports:
+      - "3308:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: video_app
+      MYSQL_CHARSET: utf8mb4
+      MYSQL_COLLATION: utf8mb4_general_ci
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci
+    networks:
+      - video_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot123"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mysql_data:
+  frontend_dist:
+
+networks:
+  video_network:
+    driver: bridge

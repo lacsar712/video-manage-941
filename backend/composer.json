@@ -1,0 +1,16 @@
+{
+    "name": "video-manage/backend",
+    "description": "Video Management Backend",
+    "type": "project",
+    "require": {
+        "php": ">=8.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    }
+}

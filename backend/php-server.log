@@ -1,0 +1,11 @@
+[Thu Jan 29 00:59:54 2026] PHP 8.5.2 Development Server (http://localhost:8000) started
+[Thu Jan 29 01:00:05 2026] [::1]:62539 Accepted
+[Thu Jan 29 01:00:05 2026] PHP Deprecated:  Constant PDO::MYSQL_ATTR_INIT_COMMAND is deprecated since 8.5, use Pdo\Mysql::ATTR_INIT_COMMAND instead in /Users/yangxiaoyao/Desktop/code/work/labels/项目/video-manage/backend/config/database.php on line 18
+[Thu Jan 29 01:00:05 2026] PHP Deprecated:  Function finfo_close() is deprecated since 8.5, as finfo objects are freed automatically in /Users/yangxiaoyao/Desktop/code/work/labels/项目/video-manage/backend/api/routes/upload.php on line 25
+[Thu Jan 29 01:00:05 2026] [::1]:62539 Closing
+[Thu Jan 29 01:04:06 2026] [::1]:49644 Accepted
+[Thu Jan 29 01:04:06 2026] [::1]:49644 Closing
+[Thu Jan 29 01:04:06 2026] [::1]:49645 Accepted
+[Thu Jan 29 01:04:06 2026] PHP Deprecated:  Constant PDO::MYSQL_ATTR_INIT_COMMAND is deprecated since 8.5, use Pdo\Mysql::ATTR_INIT_COMMAND instead in /Users/yangxiaoyao/Desktop/code/work/labels/项目/video-manage/backend/config/database.php on line 18
+[Thu Jan 29 01:04:06 2026] PHP Deprecated:  Function finfo_close() is deprecated since 8.5, as finfo objects are freed automatically in /Users/yangxiaoyao/Desktop/code/work/labels/项目/video-manage/backend/api/routes/upload.php on line 25
+[Thu Jan 29 01:04:06 2026] [::1]:49645 Closing

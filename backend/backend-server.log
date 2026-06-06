@@ -1,0 +1,101 @@
+[Thu Jan 29 01:31:15 2026] PHP 8.5.2 Development Server (http://localhost:8082) started
+[Thu Jan 29 01:31:44 2026] [::1]:59816 Accepted
+[Thu Jan 29 01:31:44 2026] PHP Deprecated:  Constant PDO::MYSQL_ATTR_INIT_COMMAND is deprecated since 8.5, use Pdo\Mysql::ATTR_INIT_COMMAND instead in /Users/yangxiaoyao/Desktop/code/work/labels/项目/video-manage/backend/config/database.php on line 18
+[Thu Jan 29 01:31:44 2026] PHP Deprecated:  Function finfo_close() is deprecated since 8.5, as finfo objects are freed automatically in /Users/yangxiaoyao/Desktop/code/work/labels/项目/video-manage/backend/api/routes/upload.php on line 25
+[Thu Jan 29 01:31:44 2026] [::1]:59816 [200]: POST /api/upload/cover
+[Thu Jan 29 01:31:44 2026] [::1]:59816 Closing
+[Thu Jan 29 01:31:53 2026] [::1]:59965 Accepted
+[Thu Jan 29 01:31:53 2026] [::1]:59965 [200]: HEAD /uploads/covers/1769621504_ff9ec303d914bae7.png
+[Thu Jan 29 01:31:53 2026] [::1]:59965 Closing
+[Thu Jan 29 01:32:28 2026] [::1]:60495 Accepted
+[Thu Jan 29 01:32:28 2026] PHP Deprecated:  Constant PDO::MYSQL_ATTR_INIT_COMMAND is deprecated since 8.5, use Pdo\Mysql::ATTR_INIT_COMMAND instead in /Users/yangxiaoyao/Desktop/code/work/labels/项目/video-manage/backend/config/database.php on line 18
+[Thu Jan 29 01:32:28 2026] PHP Deprecated:  Function finfo_close() is deprecated since 8.5, as finfo objects are freed automatically in /Users/yangxiaoyao/Desktop/code/work/labels/项目/video-manage/backend/api/routes/upload.php on line 25
+[Thu Jan 29 01:32:28 2026] [::1]:60495 [200]: POST /api/upload/cover
+[Thu Jan 29 01:32:28 2026] [::1]:60495 Closing
+[Thu Jan 29 01:32:28 2026] [::1]:60498 Accepted
+[Thu Jan 29 01:32:28 2026] [::1]:60498 [200]: GET /uploads/covers/1769621548_62bf4b5b04a32a6e.png
+[Thu Jan 29 01:32:28 2026] [::1]:60498 Closing
+[Thu Jan 29 01:32:35 2026] [::1]:60598 Accepted
+[Thu Jan 29 01:32:35 2026] PHP Deprecated:  Constant PDO::MYSQL_ATTR_INIT_COMMAND is deprecated since 8.5, use Pdo\Mysql::ATTR_INIT_COMMAND instead in /Users/yangxiaoyao/Desktop/code/work/labels/项目/video-manage/backend/config/database.php on line 18
+[Thu Jan 29 01:32:35 2026] [::1]:60598 [200]: POST /api/admin/logout
+[Thu Jan 29 01:32:35 2026] [::1]:60598 Closing
+[Thu Jan 29 01:32:42 2026] [::1]:60671 Accepted
+[Thu Jan 29 01:32:42 2026] PHP Deprecated:  Constant PDO::MYSQL_ATTR_INIT_COMMAND is deprecated since 8.5, use Pdo\Mysql::ATTR_INIT_COMMAND instead in /Users/yangxiaoyao/Desktop/code/work/labels/项目/video-manage/backend/config/database.php on line 18
+[Thu Jan 29 01:32:42 2026] [::1]:60671 [200]: POST /api/admin/login
+[Thu Jan 29 01:32:42 2026] [::1]:60671 Closing
+[Thu Jan 29 01:32:44 2026] [::1]:60731 Accepted
+[Thu Jan 29 01:32:44 2026] PHP Deprecated:  Constant PDO::MYSQL_ATTR_INIT_COMMAND is deprecated since 8.5, use Pdo\Mysql::ATTR_INIT_COMMAND instead in /Users/yangxiaoyao/Desktop/code/work/labels/项目/video-manage/backend/config/database.php on line 18
+[Thu Jan 29 01:32:44 2026] [::1]:60731 [200]: GET /api/videos?page=1&page_size=10&keyword=&status=
+[Thu Jan 29 01:32:44 2026] [::1]:60731 Closing
+[Thu Jan 29 01:32:51 2026] [::1]:60840 Accepted
+[Thu Jan 29 01:32:51 2026] PHP Deprecated:  Constant PDO::MYSQL_ATTR_INIT_COMMAND is deprecated since 8.5, use Pdo\Mysql::ATTR_INIT_COMMAND instead in /Users/yangxiaoyao/Desktop/code/work/labels/项目/video-manage/backend/config/database.php on line 18
+[Thu Jan 29 01:32:51 2026] [::1]:60840 [200]: GET /api/videos?page=1&page_size=10&keyword=&status=1
+[Thu Jan 29 01:32:51 2026] [::1]:60840 Closing
+[Thu Jan 29 01:32:54 2026] [::1]:60874 Accepted
+[Thu Jan 29 01:32:54 2026] PHP Deprecated:  Constant PDO::MYSQL_ATTR_INIT_COMMAND is deprecated since 8.5, use Pdo\Mysql::ATTR_INIT_COMMAND instead in /Users/yangxiaoyao/Desktop/code/work/labels/项目/video-manage/backend/config/database.php on line 18
+[Thu Jan 29 01:32:54 2026] [::1]:60874 [200]: GET /api/videos?page=1&page_size=10&keyword=&status=0
+[Thu Jan 29 01:32:54 2026] [::1]:60874 Closing
+[Thu Jan 29 01:32:56 2026] [::1]:60896 Accepted
+[Thu Jan 29 01:32:56 2026] PHP Deprecated:  Constant PDO::MYSQL_ATTR_INIT_COMMAND is deprecated since 8.5, use Pdo\Mysql::ATTR_INIT_COMMAND instead in /Users/yangxiaoyao/Desktop/code/work/labels/项目/video-manage/backend/config/database.php on line 18
+[Thu Jan 29 01:32:56 2026] [::1]:60896 [200]: GET /api/videos?page=1&page_size=10&keyword=
+[Thu Jan 29 01:32:56 2026] [::1]:60896 Closing
+[Thu Jan 29 01:33:02 2026] [::1]:60980 Accepted
+[Thu Jan 29 01:33:02 2026] PHP Deprecated:  Constant PDO::MYSQL_ATTR_INIT_COMMAND is deprecated since 8.5, use Pdo\Mysql::ATTR_INIT_COMMAND instead in /Users/yangxiaoyao/Desktop/code/work/labels/项目/video-manage/backend/config/database.php on line 18
+[Thu Jan 29 01:33:02 2026] [::1]:60980 [200]: GET /api/videos?page=1&page_size=10&keyword=%E6%9C%AA%E6%9D%A5%E9%83%BD%E5%B8%822099
+[Thu Jan 29 01:33:02 2026] [::1]:60980 Closing
+[Thu Jan 29 01:33:03 2026] [::1]:61003 Accepted
+[Thu Jan 29 01:33:03 2026] PHP Deprecated:  Constant PDO::MYSQL_ATTR_INIT_COMMAND is deprecated since 8.5, use Pdo\Mysql::ATTR_INIT_COMMAND instead in /Users/yangxiaoyao/Desktop/code/work/labels/项目/video-manage/backend/config/database.php on line 18
+[Thu Jan 29 01:33:03 2026] [::1]:61003 [200]: GET /api/videos?page=1&page_size=10&keyword=&status=
+[Thu Jan 29 01:33:03 2026] [::1]:61003 Closing
+[Thu Jan 29 01:33:05 2026] [::1]:61044 Accepted
+[Thu Jan 29 01:33:05 2026] PHP Deprecated:  Constant PDO::MYSQL_ATTR_INIT_COMMAND is deprecated since 8.5, use Pdo\Mysql::ATTR_INIT_COMMAND instead in /Users/yangxiaoyao/Desktop/code/work/labels/项目/video-manage/backend/config/database.php on line 18
+[Thu Jan 29 01:33:05 2026] [::1]:61044 [200]: GET /api/videos/9
+[Thu Jan 29 01:33:05 2026] [::1]:61044 Closing
+[Thu Jan 29 01:33:10 2026] [::1]:61105 Accepted
+[Thu Jan 29 01:33:10 2026] PHP Deprecated:  Constant PDO::MYSQL_ATTR_INIT_COMMAND is deprecated since 8.5, use Pdo\Mysql::ATTR_INIT_COMMAND instead in /Users/yangxiaoyao/Desktop/code/work/labels/项目/video-manage/backend/config/database.php on line 18
+[Thu Jan 29 01:33:10 2026] [::1]:61105 [200]: POST /api/videos/9
+[Thu Jan 29 01:33:10 2026] [::1]:61105 Closing
+[Thu Jan 29 01:33:10 2026] [::1]:61110 Accepted
+[Thu Jan 29 01:33:10 2026] PHP Deprecated:  Constant PDO::MYSQL_ATTR_INIT_COMMAND is deprecated since 8.5, use Pdo\Mysql::ATTR_INIT_COMMAND instead in /Users/yangxiaoyao/Desktop/code/work/labels/项目/video-manage/backend/config/database.php on line 18
+[Thu Jan 29 01:33:10 2026] [::1]:61110 [200]: GET /api/videos?page=1&page_size=10&keyword=&status=
+[Thu Jan 29 01:33:10 2026] [::1]:61110 Closing
+[Thu Jan 29 01:33:16 2026] [::1]:61205 Accepted
+[Thu Jan 29 01:33:16 2026] PHP Deprecated:  Constant PDO::MYSQL_ATTR_INIT_COMMAND is deprecated since 8.5, use Pdo\Mysql::ATTR_INIT_COMMAND instead in /Users/yangxiaoyao/Desktop/code/work/labels/项目/video-manage/backend/config/database.php on line 18
+[Thu Jan 29 01:33:16 2026] [::1]:61205 [200]: GET /api/sources?video_id=9
+[Thu Jan 29 01:33:16 2026] [::1]:61205 Closing
+[Thu Jan 29 01:33:21 2026] [::1]:61286 Accepted
+[Thu Jan 29 01:33:21 2026] PHP Deprecated:  Constant PDO::MYSQL_ATTR_INIT_COMMAND is deprecated since 8.5, use Pdo\Mysql::ATTR_INIT_COMMAND instead in /Users/yangxiaoyao/Desktop/code/work/labels/项目/video-manage/backend/config/database.php on line 18
+[Thu Jan 29 01:33:21 2026] [::1]:61286 [200]: POST /api/sources/14
+[Thu Jan 29 01:33:21 2026] [::1]:61286 Closing
+[Thu Jan 29 01:33:21 2026] [::1]:61289 Accepted
+[Thu Jan 29 01:33:21 2026] PHP Deprecated:  Constant PDO::MYSQL_ATTR_INIT_COMMAND is deprecated since 8.5, use Pdo\Mysql::ATTR_INIT_COMMAND instead in /Users/yangxiaoyao/Desktop/code/work/labels/项目/video-manage/backend/config/database.php on line 18
+[Thu Jan 29 01:33:21 2026] [::1]:61289 [200]: GET /api/sources?video_id=9
+[Thu Jan 29 01:33:21 2026] [::1]:61289 Closing
+[Thu Jan 29 01:33:45 2026] [::1]:61613 Accepted
+[Thu Jan 29 01:33:45 2026] PHP Deprecated:  Constant PDO::MYSQL_ATTR_INIT_COMMAND is deprecated since 8.5, use Pdo\Mysql::ATTR_INIT_COMMAND instead in /Users/yangxiaoyao/Desktop/code/work/labels/项目/video-manage/backend/config/database.php on line 18
+[Thu Jan 29 01:33:45 2026] [::1]:61613 [200]: POST /api/sources
+[Thu Jan 29 01:33:45 2026] [::1]:61613 Closing
+[Thu Jan 29 01:33:45 2026] [::1]:61621 Accepted
+[Thu Jan 29 01:33:45 2026] PHP Deprecated:  Constant PDO::MYSQL_ATTR_INIT_COMMAND is deprecated since 8.5, use Pdo\Mysql::ATTR_INIT_COMMAND instead in /Users/yangxiaoyao/Desktop/code/work/labels/项目/video-manage/backend/config/database.php on line 18
+[Thu Jan 29 01:33:45 2026] [::1]:61621 [200]: GET /api/sources?video_id=9
+[Thu Jan 29 01:33:45 2026] [::1]:61621 Closing
+[Thu Jan 29 01:33:48 2026] [::1]:61660 Accepted
+[Thu Jan 29 01:33:48 2026] PHP Deprecated:  Constant PDO::MYSQL_ATTR_INIT_COMMAND is deprecated since 8.5, use Pdo\Mysql::ATTR_INIT_COMMAND instead in /Users/yangxiaoyao/Desktop/code/work/labels/项目/video-manage/backend/config/database.php on line 18
+[Thu Jan 29 01:33:48 2026] [::1]:61660 [200]: DELETE /api/sources/17
+[Thu Jan 29 01:33:48 2026] [::1]:61660 Closing
+[Thu Jan 29 01:33:48 2026] [::1]:61663 Accepted
+[Thu Jan 29 01:33:48 2026] PHP Deprecated:  Constant PDO::MYSQL_ATTR_INIT_COMMAND is deprecated since 8.5, use Pdo\Mysql::ATTR_INIT_COMMAND instead in /Users/yangxiaoyao/Desktop/code/work/labels/项目/video-manage/backend/config/database.php on line 18
+[Thu Jan 29 01:33:48 2026] [::1]:61663 [200]: GET /api/sources?video_id=9
+[Thu Jan 29 01:33:48 2026] [::1]:61663 Closing
+[Thu Jan 29 01:33:50 2026] [::1]:61698 Accepted
+[Thu Jan 29 01:33:50 2026] PHP Deprecated:  Constant PDO::MYSQL_ATTR_INIT_COMMAND is deprecated since 8.5, use Pdo\Mysql::ATTR_INIT_COMMAND instead in /Users/yangxiaoyao/Desktop/code/work/labels/项目/video-manage/backend/config/database.php on line 18
+[Thu Jan 29 01:33:50 2026] [::1]:61698 [200]: GET /api/videos?page=1&page_size=10&keyword=&status=
+[Thu Jan 29 01:33:50 2026] [::1]:61698 Closing
+[Thu Jan 29 01:33:54 2026] [::1]:61789 Accepted
+[Thu Jan 29 01:33:54 2026] PHP Deprecated:  Constant PDO::MYSQL_ATTR_INIT_COMMAND is deprecated since 8.5, use Pdo\Mysql::ATTR_INIT_COMMAND instead in /Users/yangxiaoyao/Desktop/code/work/labels/项目/video-manage/backend/config/database.php on line 18
+[Thu Jan 29 01:33:54 2026] [::1]:61789 [200]: DELETE /api/videos/9
+[Thu Jan 29 01:33:54 2026] [::1]:61789 Closing
+[Thu Jan 29 01:33:54 2026] [::1]:61792 Accepted
+[Thu Jan 29 01:33:54 2026] PHP Deprecated:  Constant PDO::MYSQL_ATTR_INIT_COMMAND is deprecated since 8.5, use Pdo\Mysql::ATTR_INIT_COMMAND instead in /Users/yangxiaoyao/Desktop/code/work/labels/项目/video-manage/backend/config/database.php on line 18
+[Thu Jan 29 01:33:54 2026] [::1]:61792 [200]: GET /api/videos?page=1&page_size=10&keyword=&status=
+[Thu Jan 29 01:33:54 2026] [::1]:61792 Closing

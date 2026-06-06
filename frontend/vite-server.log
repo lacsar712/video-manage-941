@@ -1,0 +1,13 @@
+
+> video-admin@1.0.0 dev
+> vite
+
+
+  VITE v5.4.21  ready in 210 ms
+
+  ➜  Local:   http://localhost:3000/admin/
+  ➜  Network: use --host to expose
+1:26:38 AM [vite] http proxy error: /uploads/covers/1769621099_b74f887a0dd5e55e.png
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
