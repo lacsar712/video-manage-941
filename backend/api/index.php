@@ -125,6 +125,13 @@ try {
         exit;
     }
 
+    // 字幕管理
+    if (strpos($path, 'subtitles') === 0) {
+        require __DIR__ . '/routes/subtitles.php';
+        handleSubtitleRequest($path, $method);
+        exit;
+    }
+
     error('接口不存在', 404);
 
 } catch (Exception $e) {

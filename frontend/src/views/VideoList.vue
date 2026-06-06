@@ -67,10 +67,11 @@
           </template>
         </el-table-column>
         <el-table-column prop="created_at" label="创建时间" width="180" />
-        <el-table-column label="操作" width="300" fixed="right">
+        <el-table-column label="操作" width="380" fixed="right">
           <template #default="{ row }">
             <el-button size="small" @click="handleEdit(row)">编辑</el-button>
             <el-button size="small" @click="handleSources(row)">播放源</el-button>
+            <el-button size="small" @click="handleSubtitles(row)">字幕管理</el-button>
             <el-button
               size="small"
               :type="row.status == 1 ? 'warning' : 'success'"
@@ -180,6 +181,10 @@ const handleEdit = (row) => {
 
 const handleSources = (row) => {
   router.push(`/videos/${row.id}/sources`)
+}
+
+const handleSubtitles = (row) => {
+  router.push(`/videos/${row.id}/subtitles`)
 }
 
 const handleToggleStatus = async (row) => {

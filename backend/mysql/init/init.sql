@@ -175,3 +175,19 @@ CREATE TABLE IF NOT EXISTS collection_video (
     INDEX idx_collection_id (collection_id),
     INDEX idx_video_id (video_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- 表11：video_subtitle（字幕轨道）
+CREATE TABLE IF NOT EXISTS video_subtitle (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    video_id BIGINT NOT NULL COMMENT '影片ID',
+    language VARCHAR(10) NOT NULL COMMENT '语言：zh/en/ja',
+    format VARCHAR(10) NOT NULL COMMENT '格式：vtt/srt',
+    file_url VARCHAR(500) NOT NULL COMMENT '字幕文件URL',
+    file_name VARCHAR(255) COMMENT '原始文件名',
+    status TINYINT NOT NULL DEFAULT 1 COMMENT '状态：1启用 0禁用',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_video_id (video_id),
+    INDEX idx_language (language),
+    INDEX idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

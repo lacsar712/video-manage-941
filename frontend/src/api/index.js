@@ -360,3 +360,57 @@ export function updateCollectionVideoSort(id, videoOrders) {
     }
   })
 }
+
+// 获取字幕列表
+export function getSubtitleList(videoId) {
+  return request({
+    url: '/subtitles',
+    method: 'get',
+    params: { video_id: videoId }
+  })
+}
+
+// 上传字幕
+export function uploadSubtitle(data) {
+  const formData = new FormData()
+  formData.append('video_id', data.video_id)
+  formData.append('language', data.language)
+  formData.append('file', data.file)
+
+  return request({
+    url: '/subtitles',
+    method: 'post',
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}
+
+// 获取字幕预览
+export function getSubtitlePreview(id) {
+  return request({
+    url: `/subtitles/${id}/preview`,
+    method: 'get'
+  })
+}
+
+// 删除字幕
+export function deleteSubtitle(id) {
+  return request({
+    url: `/subtitles/${id}`,
+    method: 'delete'
+  })
+}
+
+// 更新字幕状态
+export function updateSubtitleStatus(id, status) {
+  const formData = new FormData()
+  formData.append('status', status)
+
+  return request({
+    url: `/subtitles/${id}/status`,
+    method: 'post',
+    data: formData
+  })
+}
