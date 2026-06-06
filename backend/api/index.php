@@ -111,6 +111,13 @@ try {
         exit;
     }
 
+    // 客户端版本管理
+    if (strpos($path, 'client_releases') === 0) {
+        require __DIR__ . '/routes/client_releases.php';
+        handleClientReleaseRequest($path, $method, $tokenData);
+        exit;
+    }
+
     error('接口不存在', 404);
 
 } catch (Exception $e) {

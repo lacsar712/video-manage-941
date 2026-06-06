@@ -132,3 +132,20 @@ CREATE TABLE IF NOT EXISTS media_asset (
     INDEX idx_uploaded_by (uploaded_by),
     INDEX idx_file_path (file_path)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- 表8：client_release（客户端版本发布）
+CREATE TABLE IF NOT EXISTS client_release (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    platform VARCHAR(20) NOT NULL COMMENT '平台：android / ios',
+    version_name VARCHAR(50) NOT NULL COMMENT '版本名称，如 1.0.0',
+    version_code INT UNSIGNED NOT NULL COMMENT '版本号，正整数，同平台唯一',
+    download_url VARCHAR(500) NOT NULL COMMENT '下载地址',
+    force_update TINYINT NOT NULL DEFAULT 0 COMMENT '是否强制更新：1是 0否',
+    changelog TEXT COMMENT '更新日志',
+    status TINYINT NOT NULL DEFAULT 0 COMMENT '状态：1发布 0下线',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uk_platform_version_code (platform, version_code),
+    INDEX idx_platform (platform),
+    INDEX idx_status (status),
+    INDEX idx_platform_status (platform, status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

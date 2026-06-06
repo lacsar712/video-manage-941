@@ -28,6 +28,10 @@
           <el-icon><Picture /></el-icon>
           <span>媒资库</span>
         </el-menu-item>
+        <el-menu-item index="/client-releases">
+          <el-icon><Promotion /></el-icon>
+          <span>版本档案</span>
+        </el-menu-item>
       </el-menu>
     </el-aside>
 
@@ -64,7 +68,7 @@
 import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessageBox, ElMessage } from 'element-plus'
-import { HomeFilled, VideoCamera, Film, UserFilled, SwitchButton, Clock, Picture } from '@element-plus/icons-vue'
+import { HomeFilled, VideoCamera, Film, UserFilled, SwitchButton, Clock, Picture, Promotion } from '@element-plus/icons-vue'
 import { logout } from '../api'
 
 const router = useRouter()
@@ -83,6 +87,9 @@ const activeMenu = computed(() => {
   if (path.startsWith('/media')) {
     return '/media'
   }
+  if (path.startsWith('/client-releases')) {
+    return '/client-releases'
+  }
   return path
 })
 
@@ -95,6 +102,7 @@ const breadcrumbName = computed(() => {
   if (path.includes('/sources')) return '播放源管理'
   if (path.startsWith('/scheduled-tasks')) return '定时任务'
   if (path.startsWith('/media')) return '媒资库'
+  if (path.startsWith('/client-releases')) return '版本档案'
   return ''
 })
 

@@ -48,6 +48,11 @@ const routes = [
         path: 'media',
         name: 'MediaLibrary',
         component: () => import('../views/MediaLibrary.vue')
+      },
+      {
+        path: 'client-releases',
+        name: 'ClientReleases',
+        component: () => import('../views/ClientReleases.vue')
       }
     ]
   }

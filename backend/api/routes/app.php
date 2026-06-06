@@ -110,6 +110,57 @@ function getAppVideoSources($id) {
     }
 }
 
+// APP API - 检查客户端版本更新
+function checkAppVersion() {
+    $platform = $_GET['platform'] ?? '';
+    $versionCode = intval($_GET['version_code'] ?? 0);
+
+    if (empty($platform)) {
+        error('平台参数不能为空');
+    }
+    if (!in_array($platform, ['android', 'ios'])) {
+        error('平台必须为 android 或 ios');
+    }
+
+    try {
+        $db = getDB();
+
+        $stmt = $db->prepare("
+            SELECT id, platform, version_name, version_code, download_url,
+                   force_update, changelog, status, created_at
+            FROM client_release
+            WHERE platform = ? AND status = 1
+            ORDER BY version_code DESC
+            LIMIT 1
+        ");
+        $stmt->execute([$platform]);
+        $latest = $stmt->fetch();
+
+        if (!$latest) {
+            success([
+                'has_update' => false,
+                'latest' => null
+            ]);
+            return;
+        }
+
+        $latest['version_code'] = intval($latest['version_code']);
+        $latest['force_update'] = intval($latest['force_update']);
+        $latest['status'] = intval($latest['status']);
+        $latest['created_at'] = formatDateTime($latest['created_at']);
+
+        $hasUpdate = $versionCode > 0 && $latest['version_code'] > $versionCode;
+
+        success([
+            'has_update' => $hasUpdate,
+            'latest' => $latest
+        ]);
+
+    } catch (Exception $e) {
+        error('查询失败：' . $e->getMessage());
+    }
+}
+
 // 处理APP请求
 function handleAppRequest($path, $method) {
     // 解析路径
@@ -124,6 +175,9 @@ function handleAppRequest($path, $method) {
     } elseif ($method === 'GET' && count($parts) === 4 && $parts[1] === 'videos' && $parts[3] === 'sources') {
         // 获取播放源列表
         getAppVideoSources($parts[2]);
+    } elseif ($method === 'GET' && $path === 'app/version/check') {
+        // 检查版本更新
+        checkAppVersion();
     } else {
         error('接口不存在', 404);
     }

@@ -183,3 +183,72 @@ export function deleteMedia(id) {
     method: 'delete'
   })
 }
+
+// 获取客户端版本列表
+export function getClientReleaseList(params) {
+  return request({
+    url: '/client_releases',
+    method: 'get',
+    params
+  })
+}
+
+// 获取各平台最新发布版本
+export function getClientReleaseLatest() {
+  return request({
+    url: '/client_releases/latest',
+    method: 'get'
+  })
+}
+
+// 获取客户端版本详情
+export function getClientReleaseDetail(id) {
+  return request({
+    url: `/client_releases/${id}`,
+    method: 'get'
+  })
+}
+
+// 新增客户端版本
+export function createClientRelease(data) {
+  return request({
+    url: '/client_releases',
+    method: 'post',
+    data,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+}
+
+// 更新客户端版本
+export function updateClientRelease(id, data) {
+  return request({
+    url: `/client_releases/${id}`,
+    method: 'post',
+    data,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+}
+
+// 删除客户端版本
+export function deleteClientRelease(id) {
+  return request({
+    url: `/client_releases/${id}`,
+    method: 'delete'
+  })
+}
+
+// 更新客户端版本状态（发布/下线）
+export function updateClientReleaseStatus(id, status) {
+  return request({
+    url: `/client_releases/${id}/status`,
+    method: 'post',
+    data: { status },
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+}
