@@ -505,3 +505,99 @@ export function updateContentRatingStatus(id, status) {
     data: formData
   })
 }
+
+// 获取推荐位槽位列表
+export function getRecommendSlotList() {
+  return request({
+    url: '/recommend_slots',
+    method: 'get'
+  })
+}
+
+// 获取推荐位槽位详情
+export function getRecommendSlotDetail(id) {
+  return request({
+    url: `/recommend_slots/${id}`,
+    method: 'get'
+  })
+}
+
+// 获取推荐位预览JSON数据
+export function getRecommendSlotsPreview() {
+  return request({
+    url: '/recommend_slots/preview',
+    method: 'get'
+  })
+}
+
+// 新增推荐位槽位
+export function createRecommendSlot(data) {
+  const formData = new FormData()
+  formData.append('slot_key', data.slot_key)
+  formData.append('title', data.title)
+  formData.append('max_items', data.max_items)
+  formData.append('status', data.status)
+  formData.append('sort_order', data.sort_order || 0)
+
+  return request({
+    url: '/recommend_slots',
+    method: 'post',
+    data: formData
+  })
+}
+
+// 更新推荐位槽位
+export function updateRecommendSlot(id, data) {
+  const formData = new FormData()
+  formData.append('slot_key', data.slot_key)
+  formData.append('title', data.title)
+  formData.append('max_items', data.max_items)
+  formData.append('status', data.status)
+  formData.append('sort_order', data.sort_order || 0)
+
+  return request({
+    url: `/recommend_slots/${id}`,
+    method: 'post',
+    data: formData
+  })
+}
+
+// 删除推荐位槽位
+export function deleteRecommendSlot(id) {
+  return request({
+    url: `/recommend_slots/${id}`,
+    method: 'delete'
+  })
+}
+
+// 向推荐位添加影片
+export function addVideosToRecommendSlot(id, videoIds) {
+  return request({
+    url: `/recommend_slots/${id}/videos`,
+    method: 'post',
+    data: { video_ids: videoIds },
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+}
+
+// 从推荐位移除影片
+export function removeVideoFromRecommendSlot(id, videoId) {
+  return request({
+    url: `/recommend_slots/${id}/videos/${videoId}`,
+    method: 'delete'
+  })
+}
+
+// 更新推荐位内影片排序
+export function updateRecommendItemSort(id, videoOrders) {
+  return request({
+    url: `/recommend_slots/${id}/sort`,
+    method: 'post',
+    data: { video_orders: videoOrders },
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+}

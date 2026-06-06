@@ -217,3 +217,35 @@ INSERT INTO content_rating (code, label, description, min_age, color_hex, status
 ('PG-13', '特别辅导级', '13岁以下儿童需在家长陪同下观看，可能含有暴力、粗口等内容', 13, '#f59e0b', 1, 30),
 ('R', '限制级', '17岁以下青少年需在家长或成年监护人陪同下观看，含有成人内容', 17, '#ef4444', 1, 40),
 ('NC-17', '成人级', '仅限18岁以上成人观看，含有明确的成人内容', 18, '#7f1d1d', 1, 50);
+
+-- 表13：recommend_slot（推荐位槽位）
+CREATE TABLE IF NOT EXISTS recommend_slot (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    slot_key VARCHAR(50) UNIQUE NOT NULL COMMENT '槽位标识，如 home_hot',
+    title VARCHAR(100) NOT NULL COMMENT '槽位显示标题',
+    max_items INT NOT NULL DEFAULT 10 COMMENT '最大条目数',
+    status TINYINT NOT NULL DEFAULT 1 COMMENT '1启用 0禁用',
+    sort_order INT NOT NULL DEFAULT 0 COMMENT '排序值，越大越靠前',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_slot_key (slot_key),
+    INDEX idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- 表14：recommend_item（推荐位条目）
+CREATE TABLE IF NOT EXISTS recommend_item (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    slot_id BIGINT NOT NULL COMMENT '槽位ID',
+    video_id BIGINT NOT NULL COMMENT '影片ID',
+    sort_order INT NOT NULL DEFAULT 0 COMMENT '排序值，越大越靠前',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uk_slot_video (slot_id, video_id),
+    INDEX idx_slot_id (slot_id),
+    INDEX idx_video_id (video_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- 插入推荐位种子数据
+INSERT INTO recommend_slot (slot_key, title, max_items, status, sort_order, created_at, updated_at) VALUES
+('home_hot', '热门推荐', 6, 1, 100, NOW(), NOW()),
+('home_new', '最新上线', 8, 1, 90, NOW(), NOW()),
+('home_classic', '经典回顾', 6, 1, 80, NOW(), NOW());

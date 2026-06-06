@@ -40,6 +40,10 @@
           <el-icon><Tickets /></el-icon>
           <span>内容分级</span>
         </el-menu-item>
+        <el-menu-item index="/recommend-slots">
+          <el-icon><MagicStick /></el-icon>
+          <span>推荐位编排</span>
+        </el-menu-item>
       </el-menu>
     </el-aside>
 
@@ -76,7 +80,7 @@
 import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessageBox, ElMessage } from 'element-plus'
-import { HomeFilled, VideoCamera, Film, UserFilled, SwitchButton, Clock, Picture, Promotion, List, Tickets } from '@element-plus/icons-vue'
+import { HomeFilled, VideoCamera, Film, UserFilled, SwitchButton, Clock, Picture, Promotion, List, Tickets, MagicStick } from '@element-plus/icons-vue'
 import { logout } from '../api'
 
 const router = useRouter()
@@ -104,6 +108,9 @@ const activeMenu = computed(() => {
   if (path.startsWith('/content-ratings')) {
     return '/content-ratings'
   }
+  if (path.startsWith('/recommend-slots')) {
+    return '/recommend-slots'
+  }
   return path
 })
 
@@ -115,6 +122,7 @@ const breadcrumbName = computed(() => {
   if (path === '/collections') return '专题合集'
   if (path === '/collections/new') return '新增合集'
   if (path === '/content-ratings') return '内容分级'
+  if (path === '/recommend-slots') return '推荐位编排'
   if (path.includes('/edit')) {
     if (path.startsWith('/collections')) return '编辑合集'
     return '编辑影片'

@@ -83,6 +83,11 @@ const routes = [
         path: 'content-ratings',
         name: 'ContentRating',
         component: () => import('../views/ContentRating.vue')
+      },
+      {
+        path: 'recommend-slots',
+        name: 'RecommendSlots',
+        component: () => import('../views/RecommendSlots.vue')
       }
     ]
   }

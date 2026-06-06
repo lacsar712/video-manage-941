@@ -139,6 +139,13 @@ try {
         exit;
     }
 
+    // 推荐位管理
+    if (strpos($path, 'recommend_slots') === 0) {
+        require __DIR__ . '/routes/recommend_slots.php';
+        handleRecommendSlotRequest($path, $method, $tokenData);
+        exit;
+    }
+
     error('接口不存在', 404);
 
 } catch (Exception $e) {
