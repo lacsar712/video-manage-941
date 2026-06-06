@@ -38,6 +38,11 @@ const routes = [
         path: 'videos/:id/sources',
         name: 'VideoSources',
         component: () => import('../views/VideoSources.vue')
+      },
+      {
+        path: 'scheduled-tasks',
+        name: 'ScheduledTasks',
+        component: () => import('../views/ScheduledTasks.vue')
       }
     ]
   }

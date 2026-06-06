@@ -131,3 +131,38 @@ export function deleteSource(id) {
     method: 'delete'
   })
 }
+
+// 获取定时任务列表
+export function getScheduledTaskList(params) {
+  return request({
+    url: '/scheduled_tasks',
+    method: 'get',
+    params
+  })
+}
+
+// 获取即将执行的定时任务
+export function getUpcomingScheduledTasks(params) {
+  return request({
+    url: '/scheduled_tasks/upcoming',
+    method: 'get',
+    params
+  })
+}
+
+// 创建定时任务
+export function createScheduledTask(data) {
+  return request({
+    url: '/scheduled_tasks',
+    method: 'post',
+    data
+  })
+}
+
+// 取消定时任务
+export function cancelScheduledTask(id) {
+  return request({
+    url: `/scheduled_tasks/${id}/cancel`,
+    method: 'post'
+  })
+}

@@ -90,6 +90,13 @@ try {
         exit;
     }
 
+    // 定时任务管理
+    if (strpos($path, 'scheduled_tasks') === 0) {
+        require __DIR__ . '/routes/scheduled_tasks.php';
+        handleScheduledTaskRequest($path, $method, $tokenData);
+        exit;
+    }
+
     // 文件上传
     if (strpos($path, 'upload/') === 0) {
         require __DIR__ . '/routes/upload.php';

@@ -83,3 +83,38 @@ INSERT INTO video_source (video_id, source_name, m3u8_url, created_at) VALUES
 (8, '线路2', 'https://cdn2.example.com/video8/index.m3u8', NOW()),
 (9, '线路1', 'https://cdn1.example.com/video9/index.m3u8', NOW()),
 (10, '线路1', 'https://cdn1.example.com/video10/index.m3u8', NOW());
+
+-- 表5：scheduled_task（定时任务）
+CREATE TABLE IF NOT EXISTS scheduled_task (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    video_id BIGINT NOT NULL,
+    action VARCHAR(20) NOT NULL COMMENT 'publish上架 unpublish下架',
+    execute_at DATETIME NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'pending' COMMENT 'pending待执行 executed已执行 cancelled已取消',
+    created_by BIGINT NOT NULL,
+    result_message VARCHAR(500),
+    executed_at DATETIME,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_video_id (video_id),
+    INDEX idx_status (status),
+    INDEX idx_execute_at (execute_at),
+    INDEX idx_status_execute (status, execute_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- 表6：operation_log（操作日志）
+CREATE TABLE IF NOT EXISTS operation_log (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    admin_id BIGINT,
+    module VARCHAR(50) NOT NULL,
+    action VARCHAR(50) NOT NULL,
+    target_type VARCHAR(50),
+    target_id BIGINT,
+    content TEXT,
+    status VARCHAR(20) NOT NULL DEFAULT 'success' COMMENT 'success成功 failed失败',
+    error_message VARCHAR(500),
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_admin_id (admin_id),
+    INDEX idx_module (module),
+    INDEX idx_created_at (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
