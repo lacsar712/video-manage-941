@@ -1,5 +1,5 @@
 <?php
-// 加载环境变量
+
 $envFile = __DIR__ . '/../.env';
 if (file_exists($envFile)) {
     $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
@@ -10,158 +10,38 @@ if (file_exists($envFile)) {
     }
 }
 
-// 错误报告设置
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 
-// 设置时区
 date_default_timezone_set('Asia/Shanghai');
 
-// 引入配置文件
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../config/helpers.php';
 
-// 设置响应头
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
-// 处理OPTIONS预检请求
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit;
 }
 
-// 获取请求路径
-$path = $_GET['path'] ?? '';
-// 如果没有path参数，尝试从REQUEST_URI中提取
-if (empty($path) && isset($_SERVER['REQUEST_URI'])) {
-    $requestUri = $_SERVER['REQUEST_URI'];
-    // 移除查询字符串
-    if (($pos = strpos($requestUri, '?')) !== false) {
-        $requestUri = substr($requestUri, 0, $pos);
-    }
-    // 提取 /api/ 后面的路径
-    if (preg_match('#^/api/(.+)$#', $requestUri, $matches)) {
-        $path = $matches[1];
-    }
-}
-$method = $_SERVER['REQUEST_METHOD'];
+use App\Core\Request;
+use App\Core\Response;
+use App\Core\Router;
+use App\Core\ApiException;
 
-// 路由分发
 try {
-    // 管理员登录（不需要token）
-    if (($path === 'login' || $path === 'admin/login') && $method === 'POST') {
-        require __DIR__ . '/routes/admin.php';
-        adminLogin();
-        exit;
-    }
-
-    // APP API（不需要token）
-    if (strpos($path, 'app/') === 0) {
-        require __DIR__ . '/routes/app.php';
-        handleAppRequest($path, $method);
-        exit;
-    }
-
-    // 以下接口需要验证token
-    $tokenData = validateToken();
-
-    // 管理员相关
-    if (strpos($path, 'admin/') === 0) {
-        require __DIR__ . '/routes/admin.php';
-        handleAdminRequest($path, $method, $tokenData);
-        exit;
-    }
-
-    // 影片管理
-    if (strpos($path, 'videos') === 0) {
-        require __DIR__ . '/routes/videos.php';
-        handleVideoRequest($path, $method);
-        exit;
-    }
-
-    // 播放源管理
-    if (strpos($path, 'sources') === 0) {
-        require __DIR__ . '/routes/sources.php';
-        handleSourceRequest($path, $method);
-        exit;
-    }
-
-    // 定时任务管理
-    if (strpos($path, 'scheduled_tasks') === 0) {
-        require __DIR__ . '/routes/scheduled_tasks.php';
-        handleScheduledTaskRequest($path, $method, $tokenData);
-        exit;
-    }
-
-    // 文件上传
-    if (strpos($path, 'upload/') === 0) {
-        require __DIR__ . '/routes/upload.php';
-        handleUploadRequest($path, $method, $tokenData);
-        exit;
-    }
-
-    // 媒资库管理
-    if (strpos($path, 'media') === 0) {
-        require __DIR__ . '/routes/media.php';
-        handleMediaRequest($path, $method, $tokenData);
-        exit;
-    }
-
-    // 客户端版本管理
-    if (strpos($path, 'client_releases') === 0) {
-        require __DIR__ . '/routes/client_releases.php';
-        handleClientReleaseRequest($path, $method, $tokenData);
-        exit;
-    }
-
-    // 专题合集管理
-    if (strpos($path, 'collections') === 0) {
-        require __DIR__ . '/routes/collections.php';
-        handleCollectionRequest($path, $method);
-        exit;
-    }
-
-    // 字幕管理
-    if (strpos($path, 'subtitles') === 0) {
-        require __DIR__ . '/routes/subtitles.php';
-        handleSubtitleRequest($path, $method);
-        exit;
-    }
-
-    // 内容分级管理
-    if (strpos($path, 'content_ratings') === 0) {
-        require __DIR__ . '/routes/content_ratings.php';
-        handleContentRatingRequest($path, $method, $tokenData);
-        exit;
-    }
-
-    // 推荐位管理
-    if (strpos($path, 'recommend_slots') === 0) {
-        require __DIR__ . '/routes/recommend_slots.php';
-        handleRecommendSlotRequest($path, $method, $tokenData);
-        exit;
-    }
-
-    // 公告管理
-    if (strpos($path, 'announcements') === 0) {
-        require __DIR__ . '/routes/announcements.php';
-        handleAnnouncementRequest($path, $method, $tokenData);
-        exit;
-    }
-
-    // 数据报表
-    if (strpos($path, 'reports') === 0) {
-        require __DIR__ . '/routes/reports.php';
-        handleReportRequest($path, $method, $tokenData);
-        exit;
-    }
-
-    error('接口不存在', 404);
-
-} catch (Exception $e) {
-    error('服务器错误：' . $e->getMessage(), 500);
+    $request = new Request();
+    $router = new Router($request);
+    $router->dispatch();
+} catch (ApiException $e) {
+    Response::error($e->getMessage(), $e->getApiCode());
+} catch (\JsonResponseException $e) {
+    throw $e;
+} catch (\Exception $e) {
+    Response::error('服务器错误：' . $e->getMessage(), 500);
 }

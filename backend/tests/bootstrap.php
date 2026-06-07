@@ -14,8 +14,8 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 // 引入配置文件
-require_once __DIR__ . '/../backend/config/database.php';
-require_once __DIR__ . '/../backend/config/helpers.php';
+require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../config/helpers.php';
 
 // 测试数据库配置
 define('TEST_DB_NAME', 'video_app_test');
