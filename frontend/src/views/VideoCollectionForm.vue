@@ -222,7 +222,7 @@
           >
             <div class="picker-checkbox">
               <el-icon v-if="isVideoSelected(video.id)"><CircleCheckFilled /></el-icon>
-              <el-icon v-else><Circle /></el-icon>
+              <span v-else class="empty-circle"></span>
             </div>
             <div class="picker-cover">
               <img :src="getCoverUrl(video.cover_url)" :alt="video.title" @error="handleImageError" />
@@ -344,7 +344,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import {
   Plus, Upload, Picture, Search, Rank, Top, Bottom, Delete,
-  CircleCheckFilled, Circle
+  CircleCheckFilled
 } from '@element-plus/icons-vue'
 import {
   getCollectionDetail, createCollection, updateCollection,
@@ -897,6 +897,14 @@ onMounted(() => {
   color: #94a3b8;
   display: flex;
   align-items: center;
+}
+
+.picker-checkbox .empty-circle {
+  width: 1em;
+  height: 1em;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  box-sizing: border-box;
 }
 
 .picker-video-item.selected .picker-checkbox {
