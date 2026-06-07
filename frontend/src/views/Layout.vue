@@ -52,7 +52,23 @@
           <el-icon><DataAnalysis /></el-icon>
           <span>数据报表</span>
         </el-menu-item>
+        <el-sub-menu index="dev" v-if="isAdmin">
+          <template #title>
+            <el-icon><Cpu /></el-icon>
+            <span>开发工具</span>
+          </template>
+          <el-menu-item index="/dev/api-console">
+            <el-icon><Link /></el-icon>
+            <span>API 调试台</span>
+          </el-menu-item>
+        </el-sub-menu>
       </el-menu>
+      <div class="sidebar-footer" v-if="isAdmin">
+        <div class="footer-badge">
+          <el-icon :size="12"><Setting /></el-icon>
+          开发者模式
+        </div>
+      </div>
     </el-aside>
 
     <el-container class="main-area">
@@ -126,13 +142,14 @@
 import { ref, computed, onMounted, watch, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessageBox, ElMessage } from 'element-plus'
-import { HomeFilled, VideoCamera, Film, UserFilled, SwitchButton, Clock, Picture, Promotion, List, Tickets, MagicStick, Bell, Close, DataAnalysis } from '@element-plus/icons-vue'
+import { HomeFilled, VideoCamera, Film, UserFilled, SwitchButton, Clock, Picture, Promotion, List, Tickets, MagicStick, Bell, Close, DataAnalysis, Cpu, Link, Setting } from '@element-plus/icons-vue'
 import { logout, getActiveAnnouncements } from '../api'
 
 const router = useRouter()
 const route = useRoute()
 
 const username = ref(localStorage.getItem('username') || 'admin')
+const isAdmin = computed(() => localStorage.getItem('role') === 'admin')
 const announcementList = ref([])
 const showAnnouncementBar = ref(false)
 const marqueeDuration = ref(30)
@@ -213,6 +230,9 @@ const activeMenu = computed(() => {
   if (path.startsWith('/reports')) {
     return '/reports'
   }
+  if (path.startsWith('/dev/api-console')) {
+    return '/dev/api-console'
+  }
   return path
 })
 
@@ -236,6 +256,7 @@ const breadcrumbName = computed(() => {
   if (path.startsWith('/media')) return '媒资库'
   if (path.startsWith('/client-releases')) return '版本档案'
   if (path.match(/^\/collections\/\d+$/)) return '合集详情'
+  if (path.startsWith('/dev/api-console')) return 'API 调试台'
   return ''
 })
 
@@ -250,6 +271,7 @@ const handleLogout = async () => {
     await logout()
     localStorage.removeItem('token')
     localStorage.removeItem('username')
+    localStorage.removeItem('role')
     sessionStorage.removeItem(DISMISS_KEY)
     ElMessage.success('退出成功')
     router.push('/login')
@@ -324,6 +346,33 @@ onMounted(() => {
 
 .sidebar :deep(.el-menu-item.is-active .el-icon) {
   color: #818cf8;
+}
+
+.sidebar-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 12px 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.footer-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(139, 92, 246, 0.15);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  border-radius: 20px;
+  font-size: 12px;
+  color: #a78bfa;
+  font-weight: 500;
+}
+
+.sidebar {
+  position: relative;
 }
 
 .announcement-bar {

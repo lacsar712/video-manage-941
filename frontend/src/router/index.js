@@ -98,6 +98,12 @@ const routes = [
         path: 'reports',
         name: 'Reports',
         component: () => import('../views/Reports.vue')
+      },
+      {
+        path: 'dev/api-console',
+        name: 'ApiConsole',
+        component: () => import('../views/ApiConsole.vue'),
+        meta: { requiresAdmin: true }
       }
     ]
   }
@@ -111,10 +117,14 @@ const router = createRouter({
 // 路由守卫
 router.beforeEach((to, _from, next) => {
   const token = localStorage.getItem('token')
+  const role = localStorage.getItem('role')
 
   if (to.meta.requiresAuth && !token) {
     ElMessage.warning('请先登录')
     next('/login')
+  } else if (to.meta.requiresAdmin && role !== 'admin') {
+    ElMessage.warning('该功能仅管理员可访问')
+    next('/dashboard')
   } else if (to.path === '/login' && token) {
     next('/')
   } else {
