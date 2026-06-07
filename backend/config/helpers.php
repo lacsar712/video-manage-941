@@ -1,13 +1,57 @@
 <?php
+
+// 测试环境下用于替代 exit 的异常类
+if (!class_exists('JsonResponseException', false)) {
+    class JsonResponseException extends Exception
+    {
+        public $responseCode;
+        public $responseMessage;
+        public $responseData;
+
+        public function __construct($code, $message, $data = null)
+        {
+            parent::__construct($message, $code);
+            $this->responseCode = $code;
+            $this->responseMessage = $message;
+            $this->responseData = $data;
+        }
+
+        public function toArray()
+        {
+            return [
+                'code' => $this->responseCode,
+                'message' => $this->responseMessage,
+                'data' => $this->responseData
+            ];
+        }
+
+        public function toJson()
+        {
+            return json_encode($this->toArray(), JSON_UNESCAPED_UNICODE);
+        }
+    }
+}
+
 // 统一响应格式
 function jsonResponse($code, $message, $data = null) {
-    header('Content-Type: application/json; charset=utf-8');
-    http_response_code(200); // 所有业务接口返回200
-    echo json_encode([
+    $payload = [
         'code' => $code,
         'message' => $message,
         'data' => $data
-    ], JSON_UNESCAPED_UNICODE);
+    ];
+
+    $json = json_encode($payload, JSON_UNESCAPED_UNICODE);
+
+    if (defined('APP_TESTING') && APP_TESTING) {
+        header('Content-Type: application/json; charset=utf-8');
+        http_response_code(200);
+        echo $json;
+        throw new JsonResponseException($code, $message, $data);
+    }
+
+    header('Content-Type: application/json; charset=utf-8');
+    http_response_code(200); // 所有业务接口返回200
+    echo $json;
     exit;
 }
 

@@ -46,6 +46,7 @@ abstract class TestCase extends BaseTestCase
         $this->db->exec("TRUNCATE TABLE admin_token");
         $this->db->exec("TRUNCATE TABLE video");
         $this->db->exec("TRUNCATE TABLE video_source");
+        $this->db->exec("TRUNCATE TABLE operation_log");
         $this->db->exec("SET FOREIGN_KEY_CHECKS = 1");
     }
 
@@ -172,5 +173,72 @@ abstract class TestCase extends BaseTestCase
         $result = $stmt->fetch();
 
         $this->assertEquals(0, $result['count'], "数据库表 $table 中找到了不应该存在的记录");
+    }
+
+    /**
+     * 执行可能触发 JSON 响应（exit 型）的回调，并捕获响应数组
+     *
+     * @param callable $callback
+     * @return array|null 成功时返回 ['code', 'message', 'data']，未抛异常时返回 null
+     */
+    protected function captureJsonResponse(callable $callback)
+    {
+        try {
+            $callback();
+            return null;
+        } catch (\JsonResponseException $e) {
+            return $e->toArray();
+        }
+    }
+
+    /**
+     * 断言回调会触发成功响应 (code === 0)
+     */
+    protected function assertSuccessResponse(callable $callback, $expectedMessage = null, $expectedData = null)
+    {
+        $response = $this->captureJsonResponse($callback);
+        $this->assertNotNull($response, '期望触发 JSON 响应，但未触发');
+        $this->assertEquals(0, $response['code'], '响应 code 应为 0（成功）');
+        if ($expectedMessage !== null) {
+            $this->assertEquals($expectedMessage, $response['message']);
+        }
+        if ($expectedData !== null) {
+            $this->assertEquals($expectedData, $response['data']);
+        }
+        return $response;
+    }
+
+    /**
+     * 断言回调会触发错误响应 (code !== 0)
+     */
+    protected function assertErrorResponse(callable $callback, $expectedCode = null, $expectedMessageContains = null)
+    {
+        $response = $this->captureJsonResponse($callback);
+        $this->assertNotNull($response, '期望触发 JSON 响应，但未触发');
+        $this->assertNotEquals(0, $response['code'], '响应 code 不应为 0（应为错误）');
+        if ($expectedCode !== null) {
+            $this->assertEquals($expectedCode, $response['code']);
+        }
+        if ($expectedMessageContains !== null) {
+            $this->assertStringContainsString($expectedMessageContains, $response['message']);
+        }
+        return $response;
+    }
+
+    /**
+     * 断言回调会触发 401 未授权响应
+     */
+    protected function assertUnauthorizedResponse(callable $callback, $expectedMessageContains = null)
+    {
+        return $this->assertErrorResponse($callback, 401, $expectedMessageContains ?? '登录');
+    }
+
+    /**
+     * 断言回调不会触发 JSON 响应（正常通过校验）
+     */
+    protected function assertPassesValidation(callable $callback)
+    {
+        $response = $this->captureJsonResponse($callback);
+        $this->assertNull($response, '期望校验通过，但触发了 JSON 响应: ' . json_encode($response, JSON_UNESCAPED_UNICODE));
     }
 }

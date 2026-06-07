@@ -3,6 +3,9 @@
  * PHPUnit 测试引导文件
  */
 
+// 标记当前处于测试环境
+define('APP_TESTING', true);
+
 // 设置时区
 date_default_timezone_set('Asia/Shanghai');
 
