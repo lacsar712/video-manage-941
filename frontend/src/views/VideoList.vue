@@ -66,70 +66,17 @@
         </el-form>
       </div>
 
-      <el-table :data="tableData" border stripe v-loading="loading" :row-class-name="getRowClassName">
-        <el-table-column prop="id" label="ID" width="80" />
-        <el-table-column prop="title" label="影片标题" min-width="200">
-          <template #default="{ row }">
-            <div class="title-cell">
-              <span>{{ row.title }}</span>
-              <el-tag v-if="!row.content_rating_code" type="warning" size="small" effect="light" class="unrated-tag">未分级</el-tag>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="cover_url" label="封面" width="120">
-          <template #default="{ row }">
-            <div v-if="row.cover_url" class="cover-wrapper" @click="handlePreview(getCoverUrl(row.cover_url))">
-              <img
-                :src="getCoverUrl(row.cover_url)"
-                :alt="row.title"
-                class="cover-image"
-                :class="{ 'cover-unrated': !row.content_rating_code }"
-                loading="lazy"
-                @error="handleImageError"
-              />
-            </div>
-            <span v-else class="cover-empty">暂无</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="内容分级" width="160">
-          <template #default="{ row }">
-            <div v-if="row.content_rating_code" class="rating-cell">
-              <span
-                class="rating-tag"
-                :style="{ backgroundColor: row.content_rating_color }"
-              >
-                {{ row.content_rating_label }}
-              </span>
-              <span class="rating-code">{{ row.content_rating_code }}</span>
-            </div>
-            <span v-else class="rating-unassigned">未设置</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="description" label="描述" min-width="200" show-overflow-tooltip />
-        <el-table-column prop="status" label="状态" width="100">
-          <template #default="{ row }">
-            <el-tag :type="row.status == 1 ? 'success' : 'info'">
-              {{ row.status == 1 ? '上架' : '下架' }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="created_at" label="创建时间" width="180" />
-        <el-table-column label="操作" width="380" fixed="right">
-          <template #default="{ row }">
-            <el-button size="small" @click="handleEdit(row)">编辑</el-button>
-            <el-button size="small" @click="handleSources(row)">播放源</el-button>
-            <el-button size="small" @click="handleSubtitles(row)">字幕管理</el-button>
-            <el-button
-              size="small"
-              :type="row.status == 1 ? 'warning' : 'success'"
-              @click="handleToggleStatus(row)"
-            >
-              {{ row.status == 1 ? '下架' : '上架' }}
-            </el-button>
-            <el-button size="small" type="danger" @click="handleDelete(row)">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+      <VideoTable
+        :data="tableData"
+        :loading="loading"
+        :get-row-class-name="getRowClassName"
+        @edit="handleEdit"
+        @sources="handleSources"
+        @subtitles="handleSubtitles"
+        @toggle-status="handleToggleStatus"
+        @delete="handleDelete"
+        @preview="handlePreview"
+      />
 
       <div class="pagination">
         <el-pagination
@@ -144,7 +91,6 @@
       </div>
     </el-card>
 
-    <!-- 图片预览对话框 -->
     <el-dialog v-model="showViewer" width="800px" :show-close="true">
       <img :src="previewUrl" style="width: 100%; display: block;" />
     </el-dialog>
@@ -152,96 +98,33 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getVideoList, deleteVideo, updateVideoStatus, getActiveContentRatings } from '../api'
+import { Plus } from '@element-plus/icons-vue'
+import { deleteVideo, updateVideoStatus } from '../api'
+import { useVideoList } from '../composables/useVideoList'
+import VideoTable from '../components/video/VideoTable.vue'
 
 const router = useRouter()
-const loading = ref(false)
-const tableData = ref([])
-const total = ref(0)
+
+const {
+  loading,
+  tableData,
+  total,
+  queryForm,
+  ratingOptions,
+  fetchData,
+  handleQuery,
+  handlePageChange,
+  handleSizeChange,
+  handleReset,
+  getRowClassName,
+  refresh
+} = useVideoList()
+
 const previewUrl = ref('')
 const showViewer = ref(false)
-const ratingOptions = ref([])
-
-const queryForm = reactive({
-  page: 1,
-  page_size: 10,
-  keyword: '',
-  status: '',
-  content_rating_code: ''
-})
-
-// 获取封面完整URL
-const getCoverUrl = (url) => {
-  if (!url) return ''
-  // 如果是完整URL，直接返回
-  if (url.startsWith('http://') || url.startsWith('https://')) {
-    return url
-  }
-  // 如果是相对路径，拼接API基础URL
-  const baseURL = import.meta.env.VITE_API_BASE_URL || ''
-  return baseURL ? `${baseURL}${url}` : url
-}
-
-// 未设置分级的行标灰
-const getRowClassName = ({ row }) => {
-  if (!row.content_rating_code) {
-    return 'row-unrated'
-  }
-  return ''
-}
-
-const fetchRatingOptions = async () => {
-  try {
-    const res = await getActiveContentRatings()
-    ratingOptions.value = res.data.list
-  } catch (error) {
-    console.error('获取内容分级选项失败：', error)
-  }
-}
-
-const fetchData = async () => {
-  loading.value = true
-  try {
-    const params = { ...queryForm }
-    if (params.content_rating_code === '__unrated__') {
-      params.only_unrated = 1
-      delete params.content_rating_code
-    }
-    const res = await getVideoList(params)
-    tableData.value = res.data.list
-    total.value = res.data.total
-  } catch (error) {
-    console.error('获取列表失败：', error)
-  } finally {
-    loading.value = false
-  }
-}
-
-const handleQuery = () => {
-  queryForm.page = 1
-  fetchData()
-}
-
-const handlePageChange = () => {
-  // 翻页时不重置页码，直接获取数据
-  fetchData()
-}
-
-const handleSizeChange = () => {
-  // 改变每页条数时重置到第一页
-  queryForm.page = 1
-  fetchData()
-}
-
-const handleReset = () => {
-  queryForm.keyword = ''
-  queryForm.status = ''
-  queryForm.content_rating_code = ''
-  handleQuery()
-}
 
 const handleAdd = () => {
   router.push('/videos/new')
@@ -279,7 +162,7 @@ const handleToggleStatus = async (row) => {
     ElMessage.success(`${action}成功`)
 
     console.log('刷新列表数据...')
-    await fetchData()
+    await refresh()
     console.log('列表数据已刷新')
   } catch (error) {
     if (error !== 'cancel') {
@@ -299,7 +182,7 @@ const handleDelete = async (row) => {
 
     await deleteVideo(row.id)
     ElMessage.success('删除成功')
-    fetchData()
+    refresh()
   } catch (error) {
     if (error !== 'cancel') {
       console.error('删除失败：', error)
@@ -311,15 +194,6 @@ const handlePreview = (url) => {
   previewUrl.value = url
   showViewer.value = true
 }
-
-const handleImageError = (e) => {
-  e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23f5f5f5" width="100" height="100"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="%23999"%3E加载失败%3C/text%3E%3C/svg%3E'
-}
-
-onMounted(() => {
-  fetchRatingOptions()
-  fetchData()
-})
 </script>
 
 <style scoped>
@@ -358,35 +232,6 @@ onMounted(() => {
   justify-content: flex-end;
 }
 
-.cover-wrapper {
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-
-.cover-wrapper:hover {
-  transform: scale(1.05);
-}
-
-.cover-image {
-  width: 80px;
-  height: 45px;
-  border-radius: 6px;
-  object-fit: cover;
-  display: block;
-}
-
-.cover-empty {
-  display: inline-flex;
-  width: 80px;
-  height: 45px;
-  align-items: center;
-  justify-content: center;
-  border-radius: 6px;
-  background: #f0f0ff;
-  color: #94a3b8;
-  font-size: 12px;
-}
-
 .video-list :deep(.el-table) {
   border-radius: 8px;
 }
@@ -408,16 +253,6 @@ onMounted(() => {
   border-color: #4f46e5;
 }
 
-.title-cell {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.unrated-tag {
-  flex-shrink: 0;
-}
-
 .video-list :deep(.el-table .row-unrated) {
   --el-table-tr-bg-color: #fafafa;
 }
@@ -428,41 +263,6 @@ onMounted(() => {
 
 .video-list :deep(.el-table .row-unrated .el-tag--warning) {
   opacity: 1;
-}
-
-.cover-unrated {
-  filter: grayscale(80%) opacity(0.7);
-}
-
-.rating-cell {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.rating-tag {
-  display: inline-block;
-  padding: 3px 8px;
-  border-radius: 4px;
-  color: #fff;
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 1.4;
-}
-
-.rating-code {
-  font-size: 12px;
-  color: #94a3b8;
-  font-family: monospace;
-}
-
-.rating-unassigned {
-  display: inline-block;
-  padding: 3px 8px;
-  border-radius: 4px;
-  background: #f1f5f9;
-  color: #94a3b8;
-  font-size: 12px;
 }
 
 .filter-rating-option {
