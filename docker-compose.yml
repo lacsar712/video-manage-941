@@ -49,6 +49,15 @@ services:
       echo 'opcache.enable=1' >> /usr/local/etc/php/conf.d/opcache.ini &&
       echo 'opcache.memory_consumption=128' >> /usr/local/etc/php/conf.d/opcache.ini &&
       echo 'opcache.max_accelerated_files=10000' >> /usr/local/etc/php/conf.d/opcache.ini &&
+      apt-get update && apt-get install -y cron &&
+      mkdir -p /var/www/html/logs &&
+      touch /var/www/html/logs/cron.log &&
+      chown -R www-data:www-data /var/www/html/logs &&
+      (
+        echo '* * * * * cd /var/www/html && /usr/local/bin/php /var/www/html/cron/check_scheduled_tasks.php >> /var/www/html/logs/cron.log 2>&1';
+        echo '30 0 * * * cd /var/www/html && /usr/local/bin/php /var/www/html/cron/generate_daily_snapshot.php >> /var/www/html/logs/cron.log 2>&1'
+      ) | crontab - &&
+      service cron start &&
       php-fpm
       "
 
